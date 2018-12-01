@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="gluegen-rt">
+    <CLASSES>
+      <root url="jar://D:/OpenGL/Jogl Libary/jar/gluegen-rt.jar!/" />
+      <root url="jar://D:/OpenGL/Jogl Libary/jar/gluegen.jar!/" />
+      <root url="jar://D:/OpenGL/Jogl Libary/jar/jogl-all.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
