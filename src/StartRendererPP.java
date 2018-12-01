@@ -59,27 +59,34 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         shaderProgram.loadShaderAndCreateProgram(shaderPath,
                 vertexShaderFileName, fragmentShaderFileName);
 
-        vaoName = new int[1];
-        gl.glGenVertexArrays(1, vaoName, 0);
+        int noOfObjects = 5;
+
+        vaoName = new int[noOfObjects];
+        gl.glGenVertexArrays(noOfObjects, vaoName, 0);
         if (vaoName[0] < 1)
             System.err.println("Error allocating vertex array object (VAO).");
         gl.glBindVertexArray(vaoName[0]);
 
-        vboName = new int[1];
-        gl.glGenBuffers(1, vboName, 0);
+        vboName = new int[noOfObjects];
+        gl.glGenBuffers(noOfObjects, vboName, 0);
         if (vboName[0] < 1)
             System.err.println("Error allocating vertex buffer object (VBO).");
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[0]);
 
-        iboName = new int[1];
-        gl.glGenBuffers(1, iboName, 0);
+        iboName = new int[noOfObjects];
+        gl.glGenBuffers(noOfObjects, iboName, 0);
         if (iboName[0] < 1)
             System.err.println("Error allocating index buffer object.");
 
-        initMainTable(gl);
 
         pmvMatrix = new PMVMatrix();
         interactionHandler.setEyeZ(0.5f);
+
+        initMainTable(gl);
+        initTableLegVR(gl);
+        initTableLegVL(gl);
+        initTableLegHL(gl);
+        initTableLegHR(gl);
 
         //gl.glEnable(GL.GL_CULL_FACE);
         gl.glCullFace(GL.GL_BACK);
@@ -116,8 +123,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
-    }
 
+    }
     private void displayMainTable(GL3 gl) {
         gl.glUseProgram(shaderProgram.getShaderProgramID());
 
@@ -126,6 +133,174 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glBindVertexArray(vaoName[0]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForBox(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initTableLegVR(GL3 gl) {
+        gl.glBindVertexArray(vaoName[1]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawTable.tableLegVRVerticices(color0);
+        int[] tableIndices = DrawTable.makeVRLegIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[1]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[1]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayTableLegVR(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[1]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForVRLeg(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initTableLegVL(GL3 gl) {
+        gl.glBindVertexArray(vaoName[2]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawTable.tableLegVLVerticices(color0);
+        int[] tableIndices = DrawTable.makeVLLegIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[2]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[2]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayTableLegVL(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[2]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForVLLeg(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initTableLegHL(GL3 gl) {
+        gl.glBindVertexArray(vaoName[3]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawTable.tableLegHLVerticices(color0);
+        int[] tableIndices = DrawTable.makeHLLegIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[3]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[3]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayTableLegHL(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[3]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForHLLeg(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initTableLegHR(GL3 gl) {
+        gl.glBindVertexArray(vaoName[4]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawTable.tableLegHRVerticices(color0);
+        int[] tableIndices = DrawTable.makeHRLegIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[4]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[4]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayTableLegHR(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[4]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForHRLeg(), GL.GL_UNSIGNED_INT, 0);
     }
 
     @Override
@@ -152,9 +327,15 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glRotatef(interactionHandler.getAngleXaxis(), 1f, 0f, 0f);
         pmvMatrix.glRotatef(interactionHandler.getAngleYaxis(), 0f, 1f, 0f);
 
+        //display Table
         pmvMatrix.glPushMatrix();
         displayMainTable(gl);
+        displayTableLegVR(gl);
+        displayTableLegVL(gl);
+        displayTableLegHL(gl);
+        displayTableLegHR(gl);
         pmvMatrix.glPopMatrix();
+
     }
 
 
