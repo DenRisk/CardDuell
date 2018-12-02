@@ -1,23 +1,28 @@
 
-public class LightSource {
-    private float[] position;
+public class Material {
+    private float[] emission;
     private float[] ambient;
     private float[] diffuse;
     private float[] specular;
+    private float shininess;
 
-    public LightSource(float[] position, float[] ambient, float[] diffuse, float[] specular) {
-        this.position = position;
+    public Material() {
+    }
+
+    public Material(float[] emission, float[] ambient, float[] diffuse, float[] specular, float shininess) {
+        this.emission = emission;
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
+        this.shininess = shininess;
     }
 
-    public float[] getPosition() {
-        return position;
+    public float[] getEmission() {
+        return emission;
     }
 
-    public void setPosition(float[] position) {
-        this.position = position;
+    public void setEmission(float[] emission) {
+        this.emission = emission;
     }
 
     public float[] getAmbient() {
@@ -44,4 +49,11 @@ public class LightSource {
         this.specular = specular;
     }
 
+    public float getShininess() {
+        return shininess;
+    }
+
+    public void setShininess(float shininess) {
+        this.shininess = shininess;
+    }
 }

@@ -1,21 +1,30 @@
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.PMVMatrix;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
+
+import static com.jogamp.opengl.GL.GL_TEXTURE0;
+import static com.jogamp.opengl.GL.GL_TEXTURE_2D;
 
 public class StartRendererPP extends GLCanvas implements GLEventListener {
 
     private static final long serialVersionUID = 1L;
 
     final String shaderPath = ".\\resources\\";
-    final String vertexShaderFileName = "Basic.vert";
-    final String fragmentShaderFileName = "Basic.frag";
+    final String vertexShaderFileName = "BlinnPhongPointTex.vert";
+    final String fragmentShaderFileName = "BlinnPhongPointTex.frag";
     private ShaderProgram shaderProgram;
 
     private LightSource light0;
+    private Material material0;
+    private LoadTexture texture;
 
     // Pointers for data transfer and handling on GPU
     private int[] vaoName;  // Name of vertex array object
@@ -59,7 +68,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         shaderProgram.loadShaderAndCreateProgram(shaderPath,
                 vertexShaderFileName, fragmentShaderFileName);
 
-        int noOfObjects = 5;
+        int noOfObjects = 6;
 
         vaoName = new int[noOfObjects];
         gl.glGenVertexArrays(noOfObjects, vaoName, 0);
@@ -78,6 +87,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         if (iboName[0] < 1)
             System.err.println("Error allocating index buffer object.");
 
+        //lightparameters
+        float[] lightPosition = {0.0f, 3.0f, 3.0f, 1.0f};
+        float[] lightAmbientColor = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] lightDiffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] lightSpecularColor = {1.0f, 1.0f, 1.0f, 1.0f};
+        light0 = new LightSource(lightPosition, lightAmbientColor,
+                lightDiffuseColor, lightSpecularColor);
 
         pmvMatrix = new PMVMatrix();
         interactionHandler.setEyeZ(0.5f);
@@ -87,6 +103,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initTableLegVL(gl);
         initTableLegHL(gl);
         initTableLegHR(gl);
+        initCard(gl);
 
         //gl.glEnable(GL.GL_CULL_FACE);
         gl.glCullFace(GL.GL_BACK);
@@ -114,22 +131,43 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glEnableVertexAttribArray(0);
         gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
-
         gl.glEnableVertexAttribArray(1);
         gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
-
         gl.glEnableVertexAttribArray(2);
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
-
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/holz-struktur.jpg");
+
     }
+
     private void displayMainTable(GL3 gl) {
         gl.glUseProgram(shaderProgram.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
 
         gl.glBindVertexArray(vaoName[0]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForBox(), GL.GL_UNSIGNED_INT, 0);
@@ -156,13 +194,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glEnableVertexAttribArray(0);
         gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
-
         gl.glEnableVertexAttribArray(1);
         gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
-
         gl.glEnableVertexAttribArray(2);
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
-
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
     }
@@ -198,13 +233,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glEnableVertexAttribArray(0);
         gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
-
         gl.glEnableVertexAttribArray(1);
         gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
-
         gl.glEnableVertexAttribArray(2);
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
-
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
     }
@@ -240,13 +272,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glEnableVertexAttribArray(0);
         gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
-
         gl.glEnableVertexAttribArray(1);
         gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
-
         gl.glEnableVertexAttribArray(2);
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
-
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
     }
@@ -282,13 +311,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glEnableVertexAttribArray(0);
         gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
-
         gl.glEnableVertexAttribArray(1);
         gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
-
         gl.glEnableVertexAttribArray(2);
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
-
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
     }
@@ -301,6 +327,50 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glBindVertexArray(vaoName[4]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForHRLeg(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initCard(GL3 gl) {
+        gl.glBindVertexArray(vaoName[5]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.0f, 0.0f, 0.0f};
+        float[] cubeVertices = DrawCard.makeCardVertices(color0);
+        int[] tableIndices = DrawCard.makeCardIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[5]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[5]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        //texture
+        //texture = new LoadTexture();
+       //texture.loadTexture(gl, "resources/Karte.JPG");
+
+    }
+
+    private void displayCard(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[5]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
 
     @Override
@@ -336,8 +406,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         displayTableLegHR(gl);
         pmvMatrix.glPopMatrix();
 
+        pmvMatrix.glPushMatrix();
+        displayCard(gl);
+        pmvMatrix.glPopMatrix();
     }
-
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
