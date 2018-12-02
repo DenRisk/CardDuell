@@ -10,8 +10,7 @@ import com.jogamp.opengl.util.PMVMatrix;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 
-import static com.jogamp.opengl.GL.GL_TEXTURE0;
-import static com.jogamp.opengl.GL.GL_TEXTURE_2D;
+import static com.jogamp.opengl.GL.*;
 
 public class StartRendererPP extends GLCanvas implements GLEventListener {
 
@@ -69,23 +68,28 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
                 vertexShaderFileName, fragmentShaderFileName);
 
         int noOfObjects = 6;
-
         vaoName = new int[noOfObjects];
-        gl.glGenVertexArrays(noOfObjects, vaoName, 0);
-        if (vaoName[0] < 1)
-            System.err.println("Error allocating vertex array object (VAO).");
-        gl.glBindVertexArray(vaoName[0]);
+        for (int i = 0; i < vaoName.length; i++) {
+            gl.glGenVertexArrays(noOfObjects, vaoName, 0);
+            if (vaoName[i] < 1)
+                System.err.println("Error allocating vertex array object (VAO).");
+            gl.glBindVertexArray(vaoName[i]);
+        }
 
         vboName = new int[noOfObjects];
-        gl.glGenBuffers(noOfObjects, vboName, 0);
-        if (vboName[0] < 1)
-            System.err.println("Error allocating vertex buffer object (VBO).");
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[0]);
+        for (int i = 0; i < vboName.length; i++) {
+            gl.glGenBuffers(noOfObjects, vboName, 0);
+            if (vboName[i] < 1)
+                System.err.println("Error allocating vertex buffer object (VBO).");
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[i]);
+        }
 
         iboName = new int[noOfObjects];
-        gl.glGenBuffers(noOfObjects, iboName, 0);
-        if (iboName[0] < 1)
-            System.err.println("Error allocating index buffer object.");
+        for (int i = 0; i < iboName.length; i++) {
+            gl.glGenBuffers(noOfObjects, iboName, 0);
+            if (iboName[i] < 1)
+                System.err.println("Error allocating index buffer object.");
+        }
 
         //lightparameters
         float[] lightPosition = {0.0f, 3.0f, 3.0f, 1.0f};
@@ -147,8 +151,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         //texture
+
         texture = new LoadTexture();
         texture.loadTexture(gl, "resources/holz-struktur.jpg");
+
+
 
     }
 
@@ -359,7 +366,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         //texture
         //texture = new LoadTexture();
-       //texture.loadTexture(gl, "resources/Karte.JPG");
+        //texture.loadTexture(gl, "resources/Karte.JPG");
+
 
     }
 

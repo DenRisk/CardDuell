@@ -5,8 +5,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
 import java.io.File;
 import java.io.IOException;
 
-import static com.jogamp.opengl.GL.GL_TEXTURE0;
-import static com.jogamp.opengl.GL.GL_TEXTURE_2D;
+import static com.jogamp.opengl.GL.*;
 
 public class LoadTexture {
 
@@ -28,7 +27,7 @@ public class LoadTexture {
         if (texture != null)
             System.out.println("Texture loaded successfully from: " + texturePath);
         else
-            System.err.println("Error loading textue.");
+            System.err.println("Error loading texture.");
         System.out.println("  Texture height: " + texture.getImageHeight());
         System.out.println("  Texture width: " + texture.getImageWidth());
         System.out.println("  Texture object: " + texture.getTextureObject(gl));
@@ -37,6 +36,10 @@ public class LoadTexture {
         texture.enable(gl);
         gl.glActiveTexture(GL_TEXTURE0);
         gl.glBindTexture(GL_TEXTURE_2D, texture.getTextureObject(gl));
+    }
+
+    public void deactivateTexture(GL3 gl) {
+        gl.glBindTexture(GL_TEXTURE_2D, 0);
     }
 
 
