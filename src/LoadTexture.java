@@ -9,6 +9,7 @@ import static com.jogamp.opengl.GL.*;
 
 public class LoadTexture {
 
+
     public void loadTexture (GL3 gl, String path) {
 
         Texture texture = null;

@@ -19,11 +19,18 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     final String shaderPath = ".\\resources\\";
     final String vertexShaderFileName = "BlinnPhongPointTex.vert";
     final String fragmentShaderFileName = "BlinnPhongPointTex.frag";
+
+    final String vertexShaderFileNameCard = "BlinnPhongPointTexCard.vert";
+    final String fragmentShaderFileNameCard = "BlinnPhongPointTexCard.frag";
+
+
     private ShaderProgram shaderProgram;
+    private ShaderProgram shaderCard;
 
     private LightSource light0;
     private Material material0;
     private LoadTexture texture;
+    private LoadTexture texture02;
 
     // Pointers for data transfer and handling on GPU
     private int[] vaoName;  // Name of vertex array object
@@ -67,7 +74,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         shaderProgram.loadShaderAndCreateProgram(shaderPath,
                 vertexShaderFileName, fragmentShaderFileName);
 
-        int noOfObjects = 6;
+        int noOfObjects = 12;
         vaoName = new int[noOfObjects];
         for (int i = 0; i < vaoName.length; i++) {
             gl.glGenVertexArrays(noOfObjects, vaoName, 0);
@@ -107,11 +114,67 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initTableLegVL(gl);
         initTableLegHL(gl);
         initTableLegHR(gl);
+
         initCard(gl);
+
+        initRoomBack(gl);
+        initRoomLeft(gl);
+        initRoomRight(gl);
+        initRoomFront(gl);
+        initRoomBottom(gl);
+        initRoomTop(gl);
 
         //gl.glEnable(GL.GL_CULL_FACE);
         gl.glCullFace(GL.GL_BACK);
         gl.glEnable(GL.GL_DEPTH_TEST);
+    }
+
+    @Override
+    public void display(GLAutoDrawable drawable) {
+        GL3 gl = drawable.getGL().getGL3();
+        gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
+
+        gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        System.out.println("Camera: z = " + interactionHandler.getEyeZ() + ", " +
+                "x-Rot: " + interactionHandler.getAngleXaxis() +
+                ", y-Rot: " + interactionHandler.getAngleYaxis() +
+                ", x-Translation: " + interactionHandler.getxPosition()+
+                ", y-Translation: " + interactionHandler.getyPosition());// definition of translation of model (Model/Object Coordinates --> World Coordinates)
+
+        pmvMatrix.glMatrixMode(PMVMatrix.GL_MODELVIEW);
+        pmvMatrix.glLoadIdentity();
+        pmvMatrix.gluLookAt(0f, 2f, interactionHandler.getEyeZ(),
+                0f, 0f, 0f,
+                0f, 1.0f, 0f);
+        pmvMatrix.glTranslatef(interactionHandler.getxPosition(), interactionHandler.getyPosition(), 0f);
+        pmvMatrix.glRotatef(interactionHandler.getAngleXaxis(), 1f, 0f, 0f);
+        pmvMatrix.glRotatef(interactionHandler.getAngleYaxis(), 0f, 1f, 0f);
+
+        //display Table
+        pmvMatrix.glPushMatrix();
+        displayMainTable(gl);
+        displayTableLegVR(gl);
+        displayTableLegVL(gl);
+        displayTableLegHL(gl);
+        displayTableLegHR(gl);
+        pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+        //pmvMatrix.glTranslatef(-0.3f,-0.05f,0.1f);
+        displayCard(gl);
+        pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+        displayRoomBack(gl);
+        displayRoomLeft(gl);
+        displayRoomRight(gl);
+        displayRoomFront(gl);
+        displayRoomBottom(gl);
+        displayRoomTop(gl);
+        pmvMatrix.glPopMatrix();
     }
 
     private void initMainTable(GL3 gl) {
@@ -151,12 +214,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         //texture
-
         texture = new LoadTexture();
         texture.loadTexture(gl, "resources/holz-struktur.jpg");
-
-
-
     }
 
     private void displayMainTable(GL3 gl) {
@@ -364,10 +423,17 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
-        //texture
-        //texture = new LoadTexture();
-        //texture.loadTexture(gl, "resources/Karte.JPG");
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
 
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        //texture
+        //texture02 = new LoadTexture();
+        //texture02.loadTexture(gl, "resources/Karte.JPG");
 
     }
 
@@ -381,43 +447,241 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
 
-    @Override
-    public void display(GLAutoDrawable drawable) {
-        GL3 gl = drawable.getGL().getGL3();
-        gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
+    private void initRoomBack(GL3 gl) {
+        gl.glBindVertexArray(vaoName[6]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
 
-        gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoom.makeRoomBackVertices(color0);
+        int[] tableIndices = DrawRoom.makeRoomIndicesForTriangleStrip();
 
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[6]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[6]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayRoomBack(GL3 gl) {
         gl.glUseProgram(shaderProgram.getShaderProgramID());
 
-        System.out.println("Camera: z = " + interactionHandler.getEyeZ() + ", " +
-                "x-Rot: " + interactionHandler.getAngleXaxis() +
-                ", y-Rot: " + interactionHandler.getAngleYaxis() +
-                ", x-Translation: " + interactionHandler.getxPosition()+
-                ", y-Translation: " + interactionHandler.getyPosition());// definition of translation of model (Model/Object Coordinates --> World Coordinates)
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
-        pmvMatrix.glMatrixMode(PMVMatrix.GL_MODELVIEW);
-        pmvMatrix.glLoadIdentity();
-        pmvMatrix.gluLookAt(0f, 2f, interactionHandler.getEyeZ(),
-                            0f, 0f, 0f,
-                            0f, 1.0f, 0f);
-        pmvMatrix.glTranslatef(interactionHandler.getxPosition(), interactionHandler.getyPosition(), 0f);
-        pmvMatrix.glRotatef(interactionHandler.getAngleXaxis(), 1f, 0f, 0f);
-        pmvMatrix.glRotatef(interactionHandler.getAngleYaxis(), 0f, 1f, 0f);
-
-        //display Table
-        pmvMatrix.glPushMatrix();
-        displayMainTable(gl);
-        displayTableLegVR(gl);
-        displayTableLegVL(gl);
-        displayTableLegHL(gl);
-        displayTableLegHR(gl);
-        pmvMatrix.glPopMatrix();
-
-        pmvMatrix.glPushMatrix();
-        displayCard(gl);
-        pmvMatrix.glPopMatrix();
+        gl.glBindVertexArray(vaoName[6]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
     }
+
+    private void initRoomLeft(GL3 gl) {
+        gl.glBindVertexArray(vaoName[7]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoom.makeRoomLeftVertices(color0);
+        int[] tableIndices = DrawRoom.makeRoomIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[7]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[7]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayRoomLeft(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[7]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomRight(GL3 gl) {
+        gl.glBindVertexArray(vaoName[8]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoom.makeRoomRightVertices(color0);
+        int[] tableIndices = DrawRoom.makeRoomIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[8]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[8]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayRoomRight(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[8]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomFront(GL3 gl) {
+        gl.glBindVertexArray(vaoName[9]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoom.makeRoomFrontVertices(color0);
+        int[] tableIndices = DrawRoom.makeRoomIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[9]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[9]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayRoomFront(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[9]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomBottom(GL3 gl) {
+        gl.glBindVertexArray(vaoName[10]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoom.makeRoomBottomVertices(color0);
+        int[] tableIndices = DrawRoom.makeRoomIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[10]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[10]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayRoomBottom(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[10]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomTop(GL3 gl) {
+        gl.glBindVertexArray(vaoName[11]);
+        shaderProgram = new ShaderProgram(gl);
+        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoom.makeRoomTopVertices(color0);
+        int[] tableIndices = DrawRoom.makeRoomIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[11]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[11]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+    }
+
+    private void displayRoomTop(GL3 gl) {
+        gl.glUseProgram(shaderProgram.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[11]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
