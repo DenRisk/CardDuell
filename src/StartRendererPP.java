@@ -18,13 +18,22 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
     final String shaderPath = ".\\resources\\";
     final String vertexShaderFileName = "BlinnPhongPointTex.vert";
-    final String fragmentShaderFileName = "BlinnPhongPointTex.frag";
 
+    final String fragmentShaderFileName = "BlinnPhongPointTex.frag";
     final String fragmentShaderFileNameCard = "BlinnPhongPointTexCard.frag";
+    final String fragmentShaderFileNameBottom = "BlinnPhongPointTexFloor.frag";
+    final String fragmentShaderFileNameWall = "BlinnPhongPointTexWall.frag";
+    final String fragmentShaderFileNameWindow = "BlinnPhongPointTexWindow.frag";
+    final String fragmentShaderFileNameSky = "BlinnPhongPointTexSky.frag";
+
 
 
     private ShaderProgram shaderProgram;
     private ShaderProgram shaderCard;
+    private ShaderProgram shaderBottom;
+    private ShaderProgram shaderWall;
+    private ShaderProgram shaderRoomWindow;
+    private ShaderProgram shaderSky;
 
     private LightSource light0;
     private Material material0;
@@ -73,7 +82,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         shaderProgram.loadShaderAndCreateProgram(shaderPath,
                 vertexShaderFileName, fragmentShaderFileName);
 
-        int noOfObjects = 19;
+        int noOfObjects = 24;
         vaoName = new int[noOfObjects];
         for (int i = 0; i < vaoName.length; i++) {
             gl.glGenVertexArrays(noOfObjects, vaoName, 0);
@@ -105,6 +114,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         light0 = new LightSource(lightPosition, lightAmbientColor,
                 lightDiffuseColor, lightSpecularColor);
 
+
         pmvMatrix = new PMVMatrix();
         interactionHandler.setEyeZ(0.5f);
 
@@ -130,6 +140,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initChairSeat(gl);
         initChairLean1(gl);
         initChairLean2(gl);
+
+        initRoomWindowTop(gl);
+        initRoomWindowBottom(gl);
+        initRoomWindowLeft(gl);
+        initRoomWindowRight(gl);
+        initRoomWindowOutside(gl);
 
         //gl.glEnable(GL.GL_CULL_FACE);
         gl.glCullFace(GL.GL_BACK);
@@ -170,7 +186,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
-        //pmvMatrix.glTranslatef(-0.3f,-0.05f,0.1f);
         displayCard(gl);
         pmvMatrix.glPopMatrix();
 
@@ -184,6 +199,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
+        pmvMatrix.glTranslatef(-1.5f,0.6f,-0.2f);
+        pmvMatrix.glRotatef(-45f, 0,1,0);
+        pmvMatrix.glTranslatef(0.2f,-0.6f,-2f);
+
         displayChairLegVL(gl);
         displayChairLegVR(gl);
         displayChairLegHL(gl);
@@ -191,6 +210,14 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         displayChairSeat(gl);
         displayChairLean1(gl);
         displayChairLean2(gl);
+        pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+        displayRoomWindowTop(gl);
+        displayRoomWindowBottom(gl);
+        displayRoomWindowLeft(gl);
+        displayRoomWindowRight(gl);
+        displayRoomWindowOutside(gl);
         pmvMatrix.glPopMatrix();
     }
 
@@ -481,8 +508,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
     private void initRoomBack(GL3 gl) {
         gl.glBindVertexArray(vaoName[6]);
-        shaderProgram = new ShaderProgram(gl);
-        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+        shaderWall = new ShaderProgram(gl);
+        shaderWall.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWall);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] cubeVertices = DrawRoom.makeRoomBackVertices(color0);
@@ -506,22 +533,47 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE3);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Wand.jpg");
     }
 
     private void displayRoomBack(GL3 gl) {
-        gl.glUseProgram(shaderProgram.getShaderProgramID());
+        gl.glUseProgram(shaderWall.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[6]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initRoomLeft(GL3 gl) {
         gl.glBindVertexArray(vaoName[7]);
-        shaderProgram = new ShaderProgram(gl);
-        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+        shaderWall = new ShaderProgram(gl);
+        shaderWall.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWall);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] cubeVertices = DrawRoom.makeRoomLeftVertices(color0);
@@ -545,22 +597,47 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE3);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Wand.jpg");
     }
 
     private void displayRoomLeft(GL3 gl) {
-        gl.glUseProgram(shaderProgram.getShaderProgramID());
+        gl.glUseProgram(shaderWall.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[7]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initRoomRight(GL3 gl) {
         gl.glBindVertexArray(vaoName[8]);
-        shaderProgram = new ShaderProgram(gl);
-        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+        shaderWall = new ShaderProgram(gl);
+        shaderWall.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWall);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] cubeVertices = DrawRoom.makeRoomRightVertices(color0);
@@ -584,22 +661,47 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE3);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Wand.jpg");
     }
 
     private void displayRoomRight(GL3 gl) {
-        gl.glUseProgram(shaderProgram.getShaderProgramID());
+        gl.glUseProgram(shaderWall.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[8]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initRoomFront(GL3 gl) {
         gl.glBindVertexArray(vaoName[9]);
-        shaderProgram = new ShaderProgram(gl);
-        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+        shaderWall = new ShaderProgram(gl);
+        shaderWall.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWall);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] cubeVertices = DrawRoom.makeRoomFrontVertices(color0);
@@ -623,22 +725,47 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE3);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Wand.jpg");
     }
 
     private void displayRoomFront(GL3 gl) {
-        gl.glUseProgram(shaderProgram.getShaderProgramID());
+        gl.glUseProgram(shaderWall.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[9]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initRoomBottom(GL3 gl) {
         gl.glBindVertexArray(vaoName[10]);
-        shaderProgram = new ShaderProgram(gl);
-        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+        shaderBottom = new ShaderProgram(gl);
+        shaderBottom.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBottom);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] cubeVertices = DrawRoom.makeRoomBottomVertices(color0);
@@ -662,22 +789,48 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        //texture
+        gl.glActiveTexture(GL_TEXTURE2);
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Fußboden.jpg");
     }
 
     private void displayRoomBottom(GL3 gl) {
-        gl.glUseProgram(shaderProgram.getShaderProgramID());
+        gl.glUseProgram(shaderBottom.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+
+        gl.glActiveTexture(GL_TEXTURE2);
         gl.glBindVertexArray(vaoName[10]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initRoomTop(GL3 gl) {
         gl.glBindVertexArray(vaoName[11]);
-        shaderProgram = new ShaderProgram(gl);
-        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+        shaderWall = new ShaderProgram(gl);
+        shaderWall.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWall);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] cubeVertices = DrawRoom.makeRoomTopVertices(color0);
@@ -701,14 +854,39 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE3);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Wand.jpg");
     }
 
     private void displayRoomTop(GL3 gl) {
-        gl.glUseProgram(shaderProgram.getShaderProgramID());
+        gl.glUseProgram(shaderWall.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[11]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoom.noOfIndicesForRoom(), GL.GL_UNSIGNED_INT, 0);
     }
@@ -986,6 +1164,325 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawChair.noOfIndicesForChair(), GL.GL_UNSIGNED_INT, 0);
     }
 
+    private void initRoomWindowTop(GL3 gl) {
+        gl.glBindVertexArray(vaoName[19]);
+        shaderRoomWindow= new ShaderProgram(gl);
+        shaderRoomWindow.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWindow);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoomWindow.WindowTopVerticices(color0);
+        int[] tableIndices = DrawRoomWindow.makeRWIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[19]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[19]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/fenster.jpg");
+    }
+
+    private void displayRoomWindowTop(GL3 gl) {
+        gl.glUseProgram(shaderRoomWindow.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        gl.glBindVertexArray(vaoName[19]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoomWindow.noOfIndicesForRW(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomWindowBottom(GL3 gl) {
+        gl.glBindVertexArray(vaoName[20]);
+        shaderRoomWindow= new ShaderProgram(gl);
+        shaderRoomWindow.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWindow);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoomWindow.WindowBottomVerticices(color0);
+        int[] tableIndices = DrawRoomWindow.makeRWIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[20]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[20]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/fenster.jpg");
+    }
+
+    private void displayRoomWindowBottom(GL3 gl) {
+        gl.glUseProgram(shaderRoomWindow.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        gl.glBindVertexArray(vaoName[20]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoomWindow.noOfIndicesForRW(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomWindowLeft(GL3 gl) {
+        gl.glBindVertexArray(vaoName[21]);
+        shaderRoomWindow= new ShaderProgram(gl);
+        shaderRoomWindow.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWindow);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoomWindow.WindowLeftVerticices(color0);
+        int[] tableIndices = DrawRoomWindow.makeRWIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[21]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[21]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/fenster.jpg");
+    }
+
+    private void displayRoomWindowLeft(GL3 gl) {
+        gl.glUseProgram(shaderRoomWindow.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        gl.glBindVertexArray(vaoName[21]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoomWindow.noOfIndicesForRW(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomWindowRight(GL3 gl) {
+        gl.glBindVertexArray(vaoName[22]);
+        shaderRoomWindow= new ShaderProgram(gl);
+        shaderRoomWindow.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWindow);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoomWindow.WindowRightVerticices(color0);
+        int[] tableIndices = DrawRoomWindow.makeRWIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[22]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[22]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/fenster.jpg");
+    }
+
+    private void displayRoomWindowRight(GL3 gl) {
+        gl.glUseProgram(shaderRoomWindow.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE4);
+        gl.glBindVertexArray(vaoName[22]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoomWindow.noOfIndicesForRW(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initRoomWindowOutside(GL3 gl) {
+        gl.glBindVertexArray(vaoName[23]);
+        shaderSky= new ShaderProgram(gl);
+        shaderSky.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameSky);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        float[] cubeVertices = DrawRoomWindow.WindowOutsideVerticices(color0);
+        int[] tableIndices = DrawRoomWindow.makeRWIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[23]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[23]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE5);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/sky.jpg");
+    }
+
+    private void displayRoomWindowOutside(GL3 gl) {
+        gl.glUseProgram(shaderSky.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE5);
+        gl.glBindVertexArray(vaoName[23]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoomWindow.noOfIndicesForRW(), GL.GL_UNSIGNED_INT, 0);
+    }
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
