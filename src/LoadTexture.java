@@ -35,7 +35,6 @@ public class LoadTexture {
         System.out.println("  Estimated memory size of texture: " + texture.getEstimatedMemorySize());
 
         texture.enable(gl);
-        gl.glActiveTexture(GL_TEXTURE0);
         gl.glBindTexture(GL_TEXTURE_2D, texture.getTextureObject(gl));
     }
 

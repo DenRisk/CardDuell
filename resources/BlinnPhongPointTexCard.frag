@@ -25,7 +25,7 @@ layout (location = 9) uniform vec4 materialSpecular;
 layout (location = 10) uniform float materialShininess;
 
 // predefined type for texture usage
-layout (binding = 0) uniform sampler2D tex;
+layout (binding = 1) uniform sampler2D tex;
 
 //in vec4 vColor;
 out vec4 FragColor;

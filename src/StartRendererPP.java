@@ -20,7 +20,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     final String vertexShaderFileName = "BlinnPhongPointTex.vert";
     final String fragmentShaderFileName = "BlinnPhongPointTex.frag";
 
-    final String vertexShaderFileNameCard = "BlinnPhongPointTexCard.vert";
     final String fragmentShaderFileNameCard = "BlinnPhongPointTexCard.frag";
 
 
@@ -30,7 +29,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private LightSource light0;
     private Material material0;
     private LoadTexture texture;
-    private LoadTexture texture02;
+
 
     // Pointers for data transfer and handling on GPU
     private int[] vaoName;  // Name of vertex array object
@@ -171,7 +170,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
-        pmvMatrix.glTranslatef(-0.3f,-0.05f,0.1f);
+        //pmvMatrix.glTranslatef(-0.3f,-0.05f,0.1f);
         displayCard(gl);
         pmvMatrix.glPopMatrix();
 
@@ -231,6 +230,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
+        gl.glActiveTexture(GL_TEXTURE0);
         //texture
         texture = new LoadTexture();
         texture.loadTexture(gl, "resources/holz-struktur.jpg");
@@ -254,6 +254,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform1f(10, material0.getShininess());
 
         gl.glBindVertexArray(vaoName[0]);
+        gl.glActiveTexture(GL_TEXTURE0);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForBox(), GL.GL_UNSIGNED_INT, 0);
     }
 
@@ -415,8 +416,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
     private void initCard(GL3 gl) {
         gl.glBindVertexArray(vaoName[5]);
-        shaderProgram = new ShaderProgram(gl);
-        shaderProgram.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileName);
+        shaderCard = new ShaderProgram(gl);
+        shaderCard.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCard);
 
         float[] color0 = {0.0f, 0.0f, 0.0f};
         float[] cubeVertices = DrawCard.makeCardVertices(color0);
@@ -450,18 +451,31 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         //texture
-        //texture02 = new LoadTexture();
-        //texture02.loadTexture(gl, "resources/Karte.JPG");
+        gl.glActiveTexture(GL_TEXTURE1);
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Karte.JPG");
 
     }
 
     private void displayCard(GL3 gl) {
-        gl.glUseProgram(shaderProgram.getShaderProgramID());
+        gl.glUseProgram(shaderCard.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
         gl.glBindVertexArray(vaoName[5]);
+        gl.glActiveTexture(GL_TEXTURE1);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
 
