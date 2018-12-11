@@ -23,6 +23,7 @@ layout (location = 7) uniform vec4 materialAmbient;
 layout (location = 8) uniform vec4 materialDiffuse;
 layout (location = 9) uniform vec4 materialSpecular;
 layout (location = 10) uniform float materialShininess;
+layout (location = 11) uniform vec4 lightspot;
 
 // predefined type for texture usage
 layout (binding = 0) uniform sampler2D tex;
@@ -45,6 +46,7 @@ void main(void)
     vec3 ambient = vec3(materialAmbient) * vec3(lightSourceAmbient);
     vec3 diffuseAlbedo = vec3(materialDiffuse) * vec3(lightSourceDiffuse);
     vec3 specularAlbedo = vec3(materialSpecular) * vec3(lightSourceSpecular);
+    vec3 lightspot = vec3 (materialAmbient) * vec3(lightspot);
 
     // Normalize the incoming N, L and V vectors
     vec3 N = normalize(fs_in.N);

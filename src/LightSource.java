@@ -4,12 +4,21 @@ public class LightSource {
     private float[] ambient;
     private float[] diffuse;
     private float[] specular;
+    private float[] lightSpot;
 
     public LightSource(float[] position, float[] ambient, float[] diffuse, float[] specular) {
         this.position = position;
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
+    }
+
+    public LightSource(float[] position, float[] ambient, float[] diffuse, float[] specular, float[] lightSpot) {
+        this.position = position;
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
+        this.lightSpot = lightSpot;
     }
 
     public float[] getPosition() {
@@ -43,5 +52,14 @@ public class LightSource {
     public void setSpecular(float[] specular) {
         this.specular = specular;
     }
+
+    public float[] getLightSpot() {
+        return lightSpot;
+    }
+
+    public void setLightSpot(float[] lightSpot) {
+        this.lightSpot = lightSpot;
+    }
+
 
 }

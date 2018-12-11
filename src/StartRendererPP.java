@@ -37,6 +37,14 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
     private LightSource light0;
     private Material material0;
+    private Material materialTable;
+    private Material materialTableLeg;
+    private Material materialCard;
+    private Material materialChair;
+    private Material materialWall;
+    private Material materialBottom;
+
+
     private LoadTexture texture;
 
 
@@ -45,8 +53,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private int[] vboName;	// Name of vertex buffer object
     private int[] iboName;	// Name of index buffer object
 
-    InteractionHandler interactionHandler; //Object for handling keyboard and mouse interaction
-    PMVMatrix pmvMatrix; // Projection model view matrix tool
+    InteractionHandler interactionHandler;
+    PMVMatrix pmvMatrix;
 
     public StartRendererPP(GLCapabilities capabilities) {
         super(capabilities);
@@ -107,12 +115,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         }
 
         //lightparameters
-        float[] lightPosition = {0.0f, 3.0f, 3.0f, 1.0f};
-        float[] lightAmbientColor = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] lightDiffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] lightPosition = {0.0f, 2.9f, 0.0f, 1.0f};
+        float[] lightAmbientColor = {2.0f, 2.0f, 2.0f, 1.0f};
+        float[] lightDiffuseColor = {2.0f, 2.0f, 2.0f, 1.0f};
         float[] lightSpecularColor = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] lightSpot = {0,0,-1};
         light0 = new LightSource(lightPosition, lightAmbientColor,
-                lightDiffuseColor, lightSpecularColor);
+                lightDiffuseColor, lightSpecularColor, lightSpot);
 
 
         pmvMatrix = new PMVMatrix();
@@ -249,13 +258,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
-        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
         float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
         float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matSpecular = {0.2f, 0.2f, 0.2f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialTable = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE0);
         //texture
@@ -274,11 +283,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
         gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
 
-        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
-        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
-        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
-        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
-        gl.glUniform1f(10, material0.getShininess());
+        gl.glUniform4fv(6, 1, materialTable.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialTable.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialTable.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialTable.getSpecular(), 0);
+        gl.glUniform1f(10, materialTable.getShininess());
+
+        gl.glUniform4fv(11,1, light0.getLightSpot(), 0);
 
         gl.glBindVertexArray(vaoName[0]);
         gl.glActiveTexture(GL_TEXTURE0);
@@ -312,6 +323,19 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.2f, 0.2f, 0.2f, 1.0f};
+        float matShininess = 200.0f;
+
+        materialTableLeg = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE0);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/holz-struktur.jpg");
     }
 
     private void displayTableLegVR(GL3 gl) {
@@ -320,7 +344,19 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, materialTableLeg.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialTableLeg.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialTableLeg.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialTableLeg.getSpecular(), 0);
+        gl.glUniform1f(10, materialTable.getShininess());
+
         gl.glBindVertexArray(vaoName[1]);
+        gl.glActiveTexture(GL_TEXTURE0);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForVRLeg(), GL.GL_UNSIGNED_INT, 0);
     }
 
@@ -469,13 +505,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
-        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matEmission = {0.5f, 0.5f, 0.5f, 1.0f};
         float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
         float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
         float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialCard = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         //texture
         gl.glActiveTexture(GL_TEXTURE1);
@@ -535,12 +571,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -559,11 +595,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
         gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
 
-        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
-        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
-        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
-        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
-        gl.glUniform1f(10, material0.getShininess());
+        gl.glUniform4fv(6, 1, materialWall.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialWall.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialWall.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialWall.getSpecular(), 0);
+        gl.glUniform1f(10, materialWall.getShininess());
 
         gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[6]);
@@ -599,12 +635,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -623,11 +659,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
         gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
 
-        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
-        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
-        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
-        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
-        gl.glUniform1f(10, material0.getShininess());
+        gl.glUniform4fv(6, 1, materialWall.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialWall.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialWall.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialWall.getSpecular(), 0);
+        gl.glUniform1f(10, materialWall.getShininess());
 
         gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[7]);
@@ -663,12 +699,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -687,11 +723,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
         gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
 
-        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
-        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
-        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
-        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
-        gl.glUniform1f(10, material0.getShininess());
+        gl.glUniform4fv(6, 1, materialWall.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialWall.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialWall.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialWall.getSpecular(), 0);
+        gl.glUniform1f(10, materialWall.getShininess());
 
         gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[8]);
@@ -727,12 +763,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -751,11 +787,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
         gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
 
-        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
-        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
-        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
-        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
-        gl.glUniform1f(10, material0.getShininess());
+        gl.glUniform4fv(6, 1, materialWall.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialWall.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialWall.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialWall.getSpecular(), 0);
+        gl.glUniform1f(10, materialWall.getShininess());
 
         gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[9]);
@@ -791,12 +827,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialBottom = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         //texture
         gl.glActiveTexture(GL_TEXTURE2);
@@ -815,11 +851,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
         gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
 
-        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
-        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
-        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
-        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
-        gl.glUniform1f(10, material0.getShininess());
+        gl.glUniform4fv(6, 1, materialBottom.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialBottom.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialBottom.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialBottom.getSpecular(), 0);
+        gl.glUniform1f(10, materialBottom.getShininess());
 
 
         gl.glActiveTexture(GL_TEXTURE2);
@@ -856,12 +892,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
         float matShininess = 200.0f;
 
-        material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -880,11 +916,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
         gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
 
-        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
-        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
-        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
-        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
-        gl.glUniform1f(10, material0.getShininess());
+        gl.glUniform4fv(6, 1, materialWall.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialWall.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialWall.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialWall.getSpecular(), 0);
+        gl.glUniform1f(10, materialWall.getShininess());
 
         gl.glActiveTexture(GL_TEXTURE3);
         gl.glBindVertexArray(vaoName[11]);
@@ -918,6 +954,21 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.2f, 0.2f, 0.2f, 1.0f};
+        float matShininess = 100.0f;
+
+        materialChair = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE0);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/holz-struktur.jpg");
+
+
     }
 
     private void displayChairLegVL(GL3 gl) {
@@ -926,6 +977,18 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, materialChair.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialChair.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialChair.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialChair.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE0);
         gl.glBindVertexArray(vaoName[12]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawChair.noOfIndicesForChair(), GL.GL_UNSIGNED_INT, 0);
     }
@@ -1452,7 +1515,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
         float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
         float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
-        float matShininess = 200.0f;
+        float matShininess = 500.0f;
 
         material0 = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 

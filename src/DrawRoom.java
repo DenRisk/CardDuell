@@ -13,7 +13,7 @@ public class DrawRoom {
         // color vector
         float[] c = color;
         // Definition of normal vectors for cuboid surfaces
-        float[] nb = {0, 0, -1}; // 0 back //
+        float[] nf = {0, 0, 1}; // front
 
         // Definition of texture coordinates for cuboid surfaces
         float[] uv00 = {0, 0}; // u = 0, v = 0
@@ -25,22 +25,22 @@ public class DrawRoom {
                 //index: 0
                 p0[0], p0[1], p0[2],   // position
                 c[0], c[1], c[2],    // color
-                nb[0], nb[1], nb[2],   // normal
+                nf[0], nf[1], nf[2],   // normal
                 uv10[0], uv10[1],      // texture coordinate
                 // index: 1
                 p3[0], p3[1], p3[2],   // position
                 c[0], c[1], c[2],   // color
-                nb[0], nb[1], nb[2],   // normal
+                nf[0], nf[1], nf[2],   // normal
                 uv00[0], uv00[1],      // texture coordinates
                 // index: 2
                 p1[0], p1[1], p1[2],   // position
                 c[0], c[1], c[2],   // color
-                nb[0], nb[1], nb[2],   // normal
+                nf[0], nf[1], nf[2],   // normal
                 uv01[0], uv01[1],      // texture coordinates
                 // index: 3
                 p2[0], p2[1], p2[2],   // position
                 c[0], c[1], c[2],   // color
-                nb[0], nb[1], nb[2],   // normal
+                nf[0], nf[1], nf[2],   // normal
                 uv11[0], uv11[1],      // texture coordinates
         };
         return verticies;

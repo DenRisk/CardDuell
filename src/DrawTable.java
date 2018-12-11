@@ -7,7 +7,7 @@ public class DrawTable {
                                         float[] uv00, float[] uv01, float[] uv10, float[] uv11) {
 
         float[] verticies = {
-                // front surface
+                // Front
                 // index: 0
                 p0[0], p0[1], p0[2],   // position
                 c[0], c[1], c[2],    // color
@@ -26,7 +26,7 @@ public class DrawTable {
                 // index: 3
                 p2[0], p2[1], p2[2],   // position
                 c[0], c[1], c[2],   // color
-                nf[0], nf[1], nf[2],   // normal
+                nu[0], nu[1], nu[2],   // normal
                 uv10[0], uv10[1],      // texture coordinates
 
                 // back surface
@@ -52,92 +52,92 @@ public class DrawTable {
                 uv10[0], uv10[1],      // texture coordinates
 
 
-                // left surface
+                // Top surface
                 // index: 8
                 p4[0], p4[1], p4[2],   // position
                 c[0], c[1], c[2],    // color
-                nl[0], nl[1], nl[2],   // normal
+                nu[0], nu[1], nu[2],   // normal
                 uv01[0], uv01[1],      // texture coordinates
                 // index: 9
                 p7[0], p7[1], p7[2],   // position
                 c[0], c[1], c[2],   // color
-                nl[0], nl[1], nl[2],   // normal
+                nu[0], nu[1], nu[2],   // normal
                 uv00[0], uv00[1],      // texture coordinates
                 // index: 10
                 p0[0], p0[1], p0[2],   // position
                 c[0], c[1], c[2],   // color
-                nl[0], nl[1], nl[2],   // normal
+                nu[0], nu[1], nu[2],   // normal
                 uv11[0], uv11[1],      // texture coordinates
                 // index: 11
                 p3[0], p3[1], p3[2],   // position
                 c[0], c[1], c[2],   // color
-                nl[0], nl[1], nl[2],   // normal
+                nu[0], nu[1], nu[2],   // normal
                 uv10[0], uv10[1],      // texture coordinates
 
-                // right surface
+                // Bottom surface
                 // index: 12
                 p1[0], p1[1], p1[2],   // position
                 c[0], c[1], c[2],    // color
-                nr[0], nr[1], nr[2],   // normal
+                nd[0], nd[1], nd[2],   // normal
                 uv01[0], uv01[1],      // texture coordinates
                 // index: 13
                 p2[0], p2[1], p2[2],   // position
                 c[0], c[1], c[2],   // color
-                nr[0], nr[1], nr[2],   // normal
+                nd[0], nd[1], nd[2],   // normal
                 uv00[0], uv00[1],      // texture coordinates
                 // index: 14
                 p5[0], p5[1], p5[2],   // position
                 c[0], c[1], c[2],   // color
-                nr[0], nr[1], nr[2],   // normal
+                nd[0], nd[1], nd[2],   // normal
                 uv11[0], uv11[1],      // texture coordinates
                 // index: 15
                 p6[0], p6[1], p6[2],   // position
                 c[0], c[1], c[2],   // color
-                nr[0], nr[1], nr[2],   // normal
+                nd[0], nd[1], nd[2],   // normal
                 uv10[0], uv10[1],      // texture coordinates
 
-                // top surface
+                // right surface
                 // index: 16
                 p4[0], p4[1], p4[2],   // position
                 c[0], c[1], c[2],    // color
-                nu[0], nu[1], nu[2],   // normal
+                nr[0], nr[1], nr[2],   // normal
                 uv01[0], uv01[1],      // texture coordinates
                 // index: 17
                 p0[0], p0[1], p0[2],   // position
                 c[0], c[1], c[2],   // color
-                nu[0], nu[1], nu[2],   // normal
+                nr[0], nr[1], nr[2],   // normal
                 uv00[0], uv00[1],      // texture coordinates
                 // index: 18
                 p5[0], p5[1], p5[2],   // position
                 c[0], c[1], c[2],   // color
-                nu[0], nu[1], nu[2],   // normal
+                nr[0], nr[1], nr[2],   // normal
                 uv11[0], uv11[1],      // texture coordinates
                 // index: 19
                 p1[0], p1[1], p1[2],   // position
                 c[0], c[1], c[2],   // color
-                nu[0], nu[1], nu[2],   // normal
+                nr[0], nr[1], nr[2],   // normal
                 uv10[0], uv10[1],      // texture coordinates
 
-                // bottom surface
+                // left surface
                 // index: 20
                 p3[0], p3[1], p3[2],   // position
                 c[0], c[1], c[2],    // color
-                nd[0], nd[1], nd[2],   // normal
+                nl[0], nl[1], nl[2],   // normal
                 uv10[0], uv10[1],      // texture coordinates
                 // index: 21
                 p7[0], p7[1], p7[2],   // position
                 c[0], c[1], c[2],   // color
-                nd[0], nd[1], nd[2],   // normal
+                nl[0], nl[1], nl[2],   // normal
                 uv11[0], uv11[1],      // texture coordinates
                 // index: 22
                 p2[0], p2[1], p2[2],   // position
                 c[0], c[1], c[2],   // color
-                nd[0], nd[1], nd[2],   // normal
+                nl[0], nl[1], nl[2],   // normal
                 uv00[0], uv00[1],      // texture coordinates
                 // index: 23
                 p6[0], p6[1], p6[2],   // position
                 c[0], c[1], c[2],   // color
-                nd[0], nd[1], nd[2],   // normal
+                nl[0], nl[1], nl[2],   // normal
                 uv01[0], uv01[1],      // texture coordinates
         };
         return verticies;
