@@ -1,14 +1,10 @@
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.PMVMatrix;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
 
 import static com.jogamp.opengl.GL.*;
 
@@ -25,7 +21,9 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     final String fragmentShaderFileNameWall = "BlinnPhongPointTexWall.frag";
     final String fragmentShaderFileNameWindow = "BlinnPhongPointTexWindow.frag";
     final String fragmentShaderFileNameSky = "BlinnPhongPointTexSky.frag";
-
+    final String fragmentShaderFileNameCandleRed = "BlinnPhongPointTexCandleRed.frag";
+    final String fragmentShaderFileNameCandleWick = "BlinnPhongPointTexCandleWick.frag";
+    final String fragmentShaderFileNameBullet = "BlinnPhongPointTexBullet.frag";
 
 
     private ShaderProgram shaderProgram;
@@ -34,6 +32,9 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private ShaderProgram shaderWall;
     private ShaderProgram shaderRoomWindow;
     private ShaderProgram shaderSky;
+    private ShaderProgram shaderCandleRed;
+    private ShaderProgram shaderCandleWick;
+    private ShaderProgram shaderBullet;
 
     private LightSource light0;
     private Material material0;
@@ -43,7 +44,15 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private Material materialChair;
     private Material materialWall;
     private Material materialBottom;
+    private Material materialCandle;
+    private Material materialBullet;
 
+    private DrawCandle candle1;
+    private DrawCandle candle2;
+    private DrawCandle candleWick1;
+    private DrawCandle candleWick2;
+
+    private DrawBullet bullet;
 
     private LoadTexture texture;
 
@@ -90,7 +99,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         shaderProgram.loadShaderAndCreateProgram(shaderPath,
                 vertexShaderFileName, fragmentShaderFileName);
 
-        int noOfObjects = 24;
+        int noOfObjects = 29;
         vaoName = new int[noOfObjects];
         for (int i = 0; i < vaoName.length; i++) {
             gl.glGenVertexArrays(noOfObjects, vaoName, 0);
@@ -156,7 +165,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initRoomWindowRight(gl);
         initRoomWindowOutside(gl);
 
-        //gl.glEnable(GL.GL_CULL_FACE);
+        initCandle01(gl);
+        initCandle02(gl);
+        initCandleWick01(gl);
+        initCandleWick02(gl);
+
+        initBullet(gl);
+
         gl.glCullFace(GL.GL_BACK);
         gl.glEnable(GL.GL_DEPTH_TEST);
     }
@@ -169,12 +184,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
         gl.glUseProgram(shaderProgram.getShaderProgramID());
-
-        System.out.println("Camera: z = " + interactionHandler.getEyeZ() + ", " +
-                "x-Rot: " + interactionHandler.getAngleXaxis() +
-                ", y-Rot: " + interactionHandler.getAngleYaxis() +
-                ", x-Translation: " + interactionHandler.getxPosition()+
-                ", y-Translation: " + interactionHandler.getyPosition());// definition of translation of model (Model/Object Coordinates --> World Coordinates)
 
         pmvMatrix.glMatrixMode(PMVMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
@@ -228,6 +237,24 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         displayRoomWindowRight(gl);
         displayRoomWindowOutside(gl);
         pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+        pmvMatrix.glTranslatef(-0.6f, 0f, -0.4f);
+        displayCandle01(gl);
+        displayCandleWick01(gl);
+        pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+        pmvMatrix.glTranslatef(-0.55f, 0f, -0.3f);
+        displayCandle02(gl);
+        displayCandleWick02(gl);
+        pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+        pmvMatrix.glTranslatef(-0.6f, 0.11f, -0.1f);
+        displayBullet(gl);
+        pmvMatrix.glPopMatrix();
+
     }
 
     private void initMainTable(GL3 gl) {
@@ -1546,6 +1573,322 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glBindVertexArray(vaoName[23]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoomWindow.noOfIndicesForRW(), GL.GL_UNSIGNED_INT, 0);
     }
+
+    private void initCandle01(GL3 gl) {
+        gl.glBindVertexArray(vaoName[24]);
+        shaderCandleRed= new ShaderProgram(gl);
+        shaderCandleRed.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCandleRed);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        candle1 = new DrawCandle(64);
+        float[] cubeVertices = candle1.makeVertices(0.05f, 0.05f, 1f, 0.25f, 0.05f, color0);
+        int[] tableIndices = candle1.makeIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[24]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[24]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 9*4, 9*4);
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 500.0f;
+
+        materialCandle = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE6);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Kerzenrot.jpg");
+    }
+
+    private void displayCandle01(GL3 gl) {
+        gl.glUseProgram(shaderCandleRed.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, materialCandle.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialCandle.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialCandle.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialCandle.getSpecular(), 0);
+        gl.glUniform1f(10, materialCandle.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE6);
+        gl.glBindVertexArray(vaoName[24]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, candle1.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initCandle02(GL3 gl) {
+        gl.glBindVertexArray(vaoName[25]);
+        shaderCandleRed= new ShaderProgram(gl);
+        shaderCandleRed.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCandleRed);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        candle2 = new DrawCandle(64);
+        float[] cubeVertices = candle2.makeVertices(0.04f, 0.04f, 1f, 0.2f, 0.05f, color0);
+        int[] tableIndices = candle2.makeIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[25]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[25]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 9*4, 9*4);
+
+
+    }
+
+    private void displayCandle02(GL3 gl) {
+        gl.glUseProgram(shaderCandleRed.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, materialCandle.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialCandle.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialCandle.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialCandle.getSpecular(), 0);
+        gl.glUniform1f(10, materialCandle.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE6);
+        gl.glBindVertexArray(vaoName[25]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, candle2.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initCandleWick01(GL3 gl) {
+        gl.glBindVertexArray(vaoName[26]);
+        shaderCandleWick= new ShaderProgram(gl);
+        shaderCandleWick.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCandleWick);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        candleWick1 = new DrawCandle(64);
+        float[] cubeVertices = candleWick1.makeVertices(0.005f, 0.005f, 1f, 0.27f, 0.05f, color0);
+        int[] tableIndices = candleWick1.makeIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[26]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[26]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
+
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.3f, 0.3f, 0.3f, 1.0f};
+        float matShininess = 500.0f;
+
+        materialCandle = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE7);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Kerzendocht.jpg");
+
+
+    }
+
+    private void displayCandleWick01(GL3 gl) {
+        gl.glUseProgram(shaderCandleWick.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, materialCandle.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialCandle.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialCandle.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialCandle.getSpecular(), 0);
+        gl.glUniform1f(10, materialCandle.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE7);
+        gl.glBindVertexArray(vaoName[26]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, candleWick1.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initCandleWick02(GL3 gl) {
+        gl.glBindVertexArray(vaoName[27]);
+        shaderCandleWick= new ShaderProgram(gl);
+        shaderCandleWick.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCandleWick);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        candleWick2 = new DrawCandle(64);
+        float[] cubeVertices = candleWick2.makeVertices(0.005f, 0.005f, 1f, 0.21f, 0.05f, color0);
+        int[] tableIndices = candleWick2.makeIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[27]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[27]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
+
+
+        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.4f, 0.4f, 0.4f, 1.0f};
+        float[] matSpecular = {0.1f, 0.1f, 0.1f, 1.0f};
+        float matShininess = 200.0f;
+
+        materialCandle = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE7);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Kerzendocht.jpg");
+
+
+    }
+
+    private void displayCandleWick02(GL3 gl) {
+        gl.glUseProgram(shaderCandleWick.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, materialCandle.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialCandle.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialCandle.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialCandle.getSpecular(), 0);
+        gl.glUniform1f(10, materialCandle.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE7);
+        gl.glBindVertexArray(vaoName[27]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, candleWick1.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initBullet(GL3 gl) {
+        gl.glBindVertexArray(vaoName[28]);
+        shaderBullet= new ShaderProgram(gl);
+        shaderBullet.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBullet);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        bullet = new DrawBullet(64, 64);
+        float[] bulletVertices = bullet.makeVertices(0.07f, color0);
+        int[] bulletIndices = bullet.makeIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[28]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, bulletVertices.length * 4,
+                FloatBuffer.wrap(bulletVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[28]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, bulletIndices.length * 4,
+                IntBuffer.wrap(bulletIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
+
+
+        float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.7f, 0.7f, 0.7f, 1.0f};
+        float[] matSpecular = {1f, 1f, 1f, 1.0f};
+        float matShininess = 1000.0f;
+
+        materialBullet = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE8);
+        //texture
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/billiard.jpg");
+    }
+
+    private void displayBullet(GL3 gl) {
+        gl.glUseProgram(shaderBullet.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, materialBullet.getEmission(), 0);
+        gl.glUniform4fv(7, 1, materialBullet.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, materialBullet.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, materialBullet.getSpecular(), 0);
+        gl.glUniform1f(10, materialBullet.getShininess());
+
+        gl.glActiveTexture(GL_TEXTURE8);
+        gl.glBindVertexArray(vaoName[28]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
