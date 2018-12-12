@@ -1,10 +1,17 @@
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.PMVMatrix;
+import de.hshl.obj.loader.OBJLoader;
+import de.hshl.obj.loader.objects.TriangleObject;
+import de.hshl.obj.loader.objects.TriangleSurface;
 
 import static com.jogamp.opengl.GL.*;
 
@@ -51,6 +58,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private DrawCandle candle2;
     private DrawCandle candleWick1;
     private DrawCandle candleWick2;
+
+    private float[] vertexCoordinates;
 
     private DrawBullet bullet;
 
@@ -99,7 +108,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         shaderProgram.loadShaderAndCreateProgram(shaderPath,
                 vertexShaderFileName, fragmentShaderFileName);
 
-        int noOfObjects = 29;
+        int noOfObjects = 30;
         vaoName = new int[noOfObjects];
         for (int i = 0; i < vaoName.length; i++) {
             gl.glGenVertexArrays(noOfObjects, vaoName, 0);
@@ -172,6 +181,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         initBullet(gl);
 
+       // initOBJ(gl);
+
         gl.glCullFace(GL.GL_BACK);
         gl.glEnable(GL.GL_DEPTH_TEST);
     }
@@ -220,7 +231,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glTranslatef(-1.5f,0.6f,-0.2f);
         pmvMatrix.glRotatef(-45f, 0,1,0);
         pmvMatrix.glTranslatef(0.2f,-0.6f,-2f);
-
         displayChairLegVL(gl);
         displayChairLegVR(gl);
         displayChairLegHL(gl);
@@ -253,6 +263,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPushMatrix();
         pmvMatrix.glTranslatef(-0.6f, 0.11f, -0.1f);
         displayBullet(gl);
+        pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+        //displayOBJ(gl);
         pmvMatrix.glPopMatrix();
 
     }
@@ -397,14 +411,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         int[] tableIndices = DrawTable.makeVLLegIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[2]);
-
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
-                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
-
         gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[2]);
 
-        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
-                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                    FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+            gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                    IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
 
         gl.glEnableVertexAttribArray(0);
         gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
@@ -564,6 +577,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
         gl.glUniform1f(10, material0.getShininess());
 
+
         gl.glBindVertexArray(vaoName[5]);
         gl.glActiveTexture(GL_TEXTURE1);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
@@ -599,9 +613,9 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
         float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
-        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
-        float matShininess = 200.0f;
+        float[] matDiffuse =  {0.0f, 0.0f, 0.0f, 1.0f};
+        float[] matSpecular = {0.1f, 0.1f, 0.1f, 1.0f};
+        float matShininess = 20.0f;
 
         materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
@@ -1889,6 +1903,36 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
     }
 
+    /*private void initOBJ (GL3 gl) {
+        gl.glBindVertexArray(vaoName[29]);
+        shaderBullet= new ShaderProgram(gl);
+        shaderBullet.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBullet);
+
+        TriangleSurface surface = loadOBJVertexCoordinates(Paths.get("objData/probe.obj"));
+        vertexCoordinates = surface.shape.vertices;
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[29]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexCoordinates.length * Float.BYTES,
+                FloatBuffer.wrap(vertexCoordinates), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 6 * Float.BYTES, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
+    }*/
+
+    /*private void displayOBJ(GL3 gl) {
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[29]);
+        gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertexCoordinates.length / 6);
+
+    }
+    */
+
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -1915,5 +1959,27 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDisableVertexAttribArray(1);
 
         System.exit(0);
+    }
+
+    private static TriangleSurface loadOBJVertexCoordinates(Path path){
+        try {
+            List<TriangleObject> objects = new OBJLoader()
+                    .useTextureCoordinates(false) // do not load uv coordinates
+                    .useNormals(true) // as a replacement for vertex colors
+                    .useStructures(false) // load everything into a single de.hshl.obj.objects, instead of separate objects
+                    .useMaterials(false) // do not load any materials, which would divide our meshes into sub-meshes
+                    .useIndexedVertices(false) // do not use indexed vertices but only a single vertices float array
+                    .loadFromLocalResource(path);
+
+            // An object contains surfaces
+            TriangleObject object = objects.get(0);
+
+            // A triangleSurface contains vertices and a material
+            return object.surfaces.get(0);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }
