@@ -65,6 +65,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
     private LoadTexture texture;
 
+    private float angle;
+
 
     // Pointers for data transfer and handling on GPU
     private int[] vaoName;  // Name of vertex array object
@@ -215,6 +217,16 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
+        if (angle ==180) {
+            displayCard(gl);
+        }
+        pmvMatrix.glTranslatef(0.0f, 0.05f, +0.0f);
+        if (angle<=180) {
+            pmvMatrix.glRotatef(angle, 0, 0, 1);
+            angle++;
+        }
+        pmvMatrix.glTranslatef(-0.20f, -0.05f, +0.1f);
+
         displayCard(gl);
         pmvMatrix.glPopMatrix();
 
