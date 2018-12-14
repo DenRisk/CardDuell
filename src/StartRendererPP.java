@@ -147,6 +147,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix = new PMVMatrix();
         interactionHandler.setEyeZ(0.5f);
 
+
+
         initMainTable(gl);
         initTableLegVR(gl);
         initTableLegVL(gl);
@@ -218,15 +220,18 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         pmvMatrix.glPushMatrix();
         if (angle ==180) {
-            displayCard(gl);
+
         }
+        pmvMatrix.glPopMatrix();
+        pmvMatrix.glPushMatrix();
+
         pmvMatrix.glTranslatef(0.0f, 0.05f, +0.0f);
-        if (angle<=180) {
+        if (angle<=180) {;
             pmvMatrix.glRotatef(angle, 0, 0, 1);
             angle++;
+
         }
         pmvMatrix.glTranslatef(-0.20f, -0.05f, +0.1f);
-
         displayCard(gl);
         pmvMatrix.glPopMatrix();
 
@@ -302,14 +307,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
                 IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
 
-        gl.glEnableVertexAttribArray(0);
-        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
-        gl.glEnableVertexAttribArray(1);
-        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
-        gl.glEnableVertexAttribArray(2);
-        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
-        gl.glEnableVertexAttribArray(3);
-        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+       initPointer(gl);
 
         float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
         float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
@@ -623,14 +621,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
-        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
-        float[] matDiffuse =  {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matSpecular = {0.1f, 0.1f, 0.1f, 1.0f};
-        float matShininess = 20.0f;
-
-        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
-
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
         texture = new LoadTexture();
@@ -687,13 +677,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
-        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
-        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
-        float matShininess = 200.0f;
 
-        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -751,13 +735,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
-        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
-        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
-        float matShininess = 200.0f;
-
-        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -815,13 +792,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
-        float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
-        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
-        float matShininess = 200.0f;
-
-        materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -922,16 +892,14 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         shaderWall.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWall);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
-        float[] cubeVertices = DrawRoom.makeRoomTopVertices(color0);
+        float[] TopVertices = DrawRoom.makeRoomTopVertices(color0);
         int[] tableIndices = DrawRoom.makeRoomIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[11]);
-
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
-                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, TopVertices.length * 4,
+                FloatBuffer.wrap(TopVertices), GL.GL_STATIC_DRAW);
 
         gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[11]);
-
         gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
                 IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
 
@@ -944,13 +912,14 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
 
+        // Materialeigenschaften der vier Wände + Decke
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
-        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matAmbient =  {0.4f, 0.4f, 0.4f, 1.0f};
         float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.4f, 0.4f, 0.4f, 1.0f};
-        float matShininess = 200.0f;
-
+        float[] matSpecular = {0.1f, 0.1f, 0.1f, 1.0f};
+        float matShininess = 100.0f;
         materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
 
         gl.glActiveTexture(GL_TEXTURE3);
         //texture
@@ -1913,6 +1882,84 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glActiveTexture(GL_TEXTURE8);
         gl.glBindVertexArray(vaoName[28]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initCardCopy(GL3 gl) {
+        gl.glBindVertexArray(vaoName[29]);
+        shaderCard = new ShaderProgram(gl);
+        shaderCard.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCard);
+
+        float[] color0 = {0.0f, 0.0f, 0.0f};
+        float[] cubeVertices = DrawCard.makeCardVertices02(color0);
+        int[] tableIndices = DrawCard.makeCardIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[29]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[29]);
+
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
+
+        float[] matEmission = {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 200.0f;
+
+        materialCard = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        //texture
+        gl.glActiveTexture(GL_TEXTURE1);
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Karte.JPG");
+
+    }
+
+    private void displayCardCopy(GL3 gl) {
+        gl.glUseProgram(shaderCard.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glUniform4fv(2, 1, light0.getPosition(), 0);
+        gl.glUniform4fv(3, 1, light0.getAmbient(), 0);
+        gl.glUniform4fv(4, 1, light0.getDiffuse(), 0);
+        gl.glUniform4fv(5, 1, light0.getSpecular(), 0);
+
+        gl.glUniform4fv(6, 1, material0.getEmission(), 0);
+        gl.glUniform4fv(7, 1, material0.getAmbient(), 0);
+        gl.glUniform4fv(8, 1, material0.getDiffuse(), 0);
+        gl.glUniform4fv(9, 1, material0.getSpecular(), 0);
+        gl.glUniform1f(10, material0.getShininess());
+
+
+        gl.glBindVertexArray(vaoName[29]);
+        gl.glActiveTexture(GL_TEXTURE1);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initPointer (GL3 gl) {
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 11*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 11*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 11*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
     }
 
     /*private void initOBJ (GL3 gl) {
