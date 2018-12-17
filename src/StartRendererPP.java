@@ -176,6 +176,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initCandleWick02(gl);
 
         initBullet(gl);
+        initCardCopy(gl);
 
        // initOBJ(gl);
 
@@ -209,21 +210,23 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         displayTableLegHR(gl);
         pmvMatrix.glPopMatrix();
 
-        pmvMatrix.glPushMatrix();
-        if (angle ==180) {
 
-        }
-        pmvMatrix.glPopMatrix();
         pmvMatrix.glPushMatrix();
-
         pmvMatrix.glTranslatef(0.0f, 0.05f, +0.0f);
-        if (angle<=180) {;
+        if (angle<180) {
             pmvMatrix.glRotatef(angle, 0, 0, 1);
             angle++;
+            pmvMatrix.glTranslatef(-0.20f, -0.05f, +0.1f);
+            displayCard(gl);
+        } else if (angle == 180) {
+            pmvMatrix.glTranslatef(0.0f, -0.045f, +0.0f);
+
+
+
+            displayCardCopy(gl);
+
 
         }
-        pmvMatrix.glTranslatef(-0.20f, -0.05f, +0.1f);
-        displayCard(gl);
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
@@ -1213,7 +1216,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glActiveTexture(GL_TEXTURE6);
         //texture for the red candle
         texture = new LoadTexture();
-        texture.loadTexture(gl, "resources/Kerzenrot.jpg");
+        texture.loadTexture02(gl, "resources/Kerzenrot.jpg");
     }
 
     private void displayCandle01(GL3 gl) {
@@ -1400,7 +1403,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glActiveTexture(GL_TEXTURE8);
         //texture for the bullet
         texture = new LoadTexture();
-        texture.loadTexture(gl, "resources/billiard.jpg");
+        texture.loadTexture02(gl, "resources/billiard.jpg");
     }
 
     private void displayBullet(GL3 gl) {
