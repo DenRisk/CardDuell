@@ -3,7 +3,7 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
@@ -19,13 +19,18 @@ public class StartCodeMainWindowPP extends JFrame {
     private static final int CANVAS_HEIGHT = 650; // height of the drawable
     private static final int FPS = 60; // animator's target frames per second
 
+
+
     public StartCodeMainWindowPP() {
 
         GLProfile profile = GLProfile.get(GLProfile.GL3);
         GLCapabilities capabilities = new GLCapabilities(profile);
 
+
+
         GLCanvas canvas = new StartRendererPP(capabilities);
         canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+
 
         final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
 

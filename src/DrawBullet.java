@@ -1,8 +1,8 @@
 /**
- * Java class for creating vertex and buffer data for drawing a sphere
- * using Jogl/OpenGL.
- * Intended to be used for an OpenGL scene renderer.
- * The resolution of the sphere is held as instance variables.
+ * Bearbeitet von Denis Niklas Risken
+ * Die Klasse habe ich übernommen aus der Datei JoglShapesPP.zip, die sich auf der Lernplattform befindet.
+ * Bei der Initialisierung der Kugel habe ich eigenständig Größe und Position überlegt und in die Szene eingebaut (siehe StartRendererPP)
+ *
  * @author Karsten Lehn
  * @version 21.10.2017, 27.10.2017
  */
@@ -17,13 +17,6 @@ public class DrawBullet {
         noOfIndices = noOfIndicesForSphere();
     }
 
-    /**
-     * Creates vertices for a (UV)-sphere with one single color and normal vectors.
-     * To be used together with makeIndicesForTriangleStrip().
-     * @param radius radius of the sphere
-     * @param color three dimensional color vector for each vertex
-     * @return list of vertices
-     */
     public float[] makeVertices(float radius, float[] color)
     {
         // Using spherical coordinates to create the vertices
@@ -65,12 +58,6 @@ public class DrawBullet {
         return vertices;
     }
 
-    /**
-     * Creates indices for drawing a sphere with glDrawElements().
-     * To be used together with makeVertices().
-     * To be used with "glDrawElements" and "GL_TRIANGLE_STRIP".
-     * @return indices into the vertex array of the sphere
-     */
     public int[] makeIndicesForTriangleStrip() {
 
         // Indices to refer to the number of the sphere vertices
@@ -88,18 +75,10 @@ public class DrawBullet {
         return indices;
     }
 
-    /**
-     * Computes the number of indices of a sphere for the draw call.
-     * @return number of indices the index buffer
-     */
     private int noOfIndicesForSphere() {
         return 2 * verticalResolution * horizontalResolution;
     }
 
-    /**
-     * Returns the number of indices of a sphere for the draw call.
-     * @return number of indices the index buffer
-     */
     public int getNoOfIndices() {
         return noOfIndices;
     }

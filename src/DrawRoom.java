@@ -194,7 +194,7 @@ public class DrawRoom {
         float[] c = color;
         // Definition of normal vectors for cuboid surfaces
 
-        float[] nd = { 0, -1,  0}; // 0 down (bottom)
+        float[] nd = { 0, 1,  0}; // 0 down (bottom)
 
         // Definition of texture coordinates for cuboid surfaces
         float[] uv00 = {0, 0}; // u = 0, v = 0

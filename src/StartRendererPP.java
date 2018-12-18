@@ -5,12 +5,16 @@ import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.List;
 
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.PMVMatrix;
 import de.hshl.obj.loader.OBJLoader;
 import de.hshl.obj.loader.objects.TriangleObject;
 import de.hshl.obj.loader.objects.TriangleSurface;
+
+
+import javax.swing.*;
 
 import static com.jogamp.opengl.GL.*;
 
@@ -22,7 +26,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     final String vertexShaderFileName = "BlinnPhongPointTex.vert";
 
     final String fragmentShaderFileNameTable = "BlinnPhongPointTex.frag";
-    final String fragmentShaderFileNameCard = "BlinnPhongPointTexCard.frag";
+    final String fragmentShaderFileNameCardKa = "BlinnPhongPointTexCardKaroAs.frag";
+    final String fragmentShaderFileNameCardH2 = "BlinnPhongPointTexCardHeart2.frag";
+    final String fragmentShaderFileNameCardK3 = "BlinnPhongPointTexCardKaro3.frag";
+    final String fragmentShaderFileNameCardP7 = "BlinnPhongPointTexCardPik7.frag";
     final String fragmentShaderFileNameBottom = "BlinnPhongPointTexFloor.frag";
     final String fragmentShaderFileNameWall = "BlinnPhongPointTexWall.frag";
     final String fragmentShaderFileNameWindow = "BlinnPhongPointTexWindow.frag";
@@ -30,6 +37,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     final String fragmentShaderFileNameCandleRed = "BlinnPhongPointTexCandleRed.frag";
     final String fragmentShaderFileNameCandleWick = "BlinnPhongPointTexCandleWick.frag";
     final String fragmentShaderFileNameBullet = "BlinnPhongPointTexBullet.frag";
+    final String fragmentShaderFileNameCB = "BlinnPhongPointTexCardBackside.frag";
 
 
     private ShaderProgram shaderTable;
@@ -41,6 +49,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private ShaderProgram shaderCandleRed;
     private ShaderProgram shaderCandleWick;
     private ShaderProgram shaderBullet;
+    private ShaderProgram shaderCB;
+    private ShaderProgram shaderH2;
+    private ShaderProgram shaderK3;
+    private ShaderProgram shaderP7;
 
     private LightSource lightMain;
     private Material materialWindowFrame;
@@ -65,7 +77,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
     private LoadTexture texture;
 
+    private TriangleSurface surface;
+
     private float angle;
+
+    private JButton button;
+
+    private int zahl;
 
     // Pointers for data transfer and handling on GPU
     private int[] vaoName;  // Name of vertex array object
@@ -105,7 +123,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         else
             System.out.println("VBO support is available");
 
-        int noOfObjects = 30;
+        int noOfObjects = 35;
+
         vaoName = new int[noOfObjects];
         for (int i = 0; i < vaoName.length; i++) {
             gl.glGenVertexArrays(noOfObjects, vaoName, 0);
@@ -147,7 +166,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initTableLegHL(gl);
         initTableLegHR(gl);
 
-        initCard(gl);
+        initCardBack(gl);
+        initCardFront(gl);
 
         initRoomBack(gl);
         initRoomLeft(gl);
@@ -179,6 +199,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initCardCopy(gl);
 
        // initOBJ(gl);
+         initWA01(gl);
+         initWA02(gl);
 
         gl.glCullFace(GL.GL_BACK);
         gl.glEnable(GL.GL_DEPTH_TEST);
@@ -190,8 +212,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
         gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
-        gl.glUseProgram(shaderTable.getShaderProgramID());
 
         pmvMatrix.glMatrixMode(PMVMatrix.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
@@ -211,22 +231,18 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
 
 
-        pmvMatrix.glPushMatrix();
-        pmvMatrix.glTranslatef(0.0f, 0.05f, +0.0f);
-        if (angle<180) {
-            pmvMatrix.glRotatef(angle, 0, 0, 1);
-            angle++;
-            pmvMatrix.glTranslatef(-0.20f, -0.05f, +0.1f);
-            displayCard(gl);
-        } else if (angle == 180) {
-            pmvMatrix.glTranslatef(0.0f, -0.045f, +0.0f);
-
-
-
-            displayCardCopy(gl);
-
-
-        }
+       pmvMatrix.glPushMatrix();
+                pmvMatrix.glTranslatef(0.0f, 0.05f, +0.0f);
+                if (angle<180) {
+                    pmvMatrix.glRotatef(angle, 0, 0, 1);
+                    angle++;
+                    pmvMatrix.glTranslatef(-0.20f, -0.05f, +0.1f);
+                    displayCardBS(gl);
+                    displayCardFS(gl);
+                } else if (angle == 180) {
+                    pmvMatrix.glTranslatef(0.0f, -0.045f, +0.0f);
+                    displayCardCopy(gl);
+                }
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
@@ -275,11 +291,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glTranslatef(-0.6f, 0.11f, -0.1f);
         displayBullet(gl);
         pmvMatrix.glPopMatrix();
-
-        pmvMatrix.glPushMatrix();
-        //displayOBJ(gl);
-        pmvMatrix.glPopMatrix();
-
     }
 
     //init Table
@@ -470,56 +481,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glBindVertexArray(vaoName[4]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForHRLeg(), GL.GL_UNSIGNED_INT, 0);
-    }
-
-    //init Card
-    private void initCard(GL3 gl) {
-        gl.glBindVertexArray(vaoName[5]);
-        shaderCard = new ShaderProgram(gl);
-        shaderCard.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCard);
-
-        float[] color0 = {0.0f, 0.0f, 0.0f};
-        float[] cVertices = DrawCard.makeCardVertices(color0);
-        int[] cIndices = DrawCard.makeCardIndicesForTriangleStrip();
-
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[5]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, cVertices.length * 4,
-                FloatBuffer.wrap(cVertices), GL.GL_STATIC_DRAW);
-
-        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[5]);
-        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, cIndices.length * 4,
-                IntBuffer.wrap(cIndices), GL.GL_STATIC_DRAW);
-
-        //method to specify the location and data format
-        initPointer(gl);
-
-        //define material properties for the Card
-        float[] matEmission = {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
-        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
-        float matShininess = 128.0f;
-        materialCard = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
-
-        //texture for the Card
-        gl.glActiveTexture(GL_TEXTURE1);
-        texture = new LoadTexture();
-        texture.loadTexture(gl, "resources/Karte.JPG");
-
-    }
-
-    private void displayCard(GL3 gl) {
-        gl.glUseProgram(shaderCard.getShaderProgramID());
-
-        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
-        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
-
-        // method for modifying the value of a uniform variable or a uniform variable array
-        initUniform(gl, lightMain, materialCard);
-
-        gl.glBindVertexArray(vaoName[5]);
-        gl.glActiveTexture(GL_TEXTURE1);
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
 
     // init Room
@@ -1422,8 +1383,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     // init copy of a card (not used)
     private void initCardCopy(GL3 gl) {
         gl.glBindVertexArray(vaoName[29]);
-        shaderCard = new ShaderProgram(gl);
-        shaderCard.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCard);
 
         float[] color0 = {0.0f, 0.0f, 0.0f};
         float[] cubeVertices = DrawCard.makeCardVertices02(color0);
@@ -1441,13 +1400,61 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     }
 
     private void displayCardCopy(GL3 gl) {
-        gl.glUseProgram(shaderCard.getShaderProgramID());
+        switch (zahl) {
 
-        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
-        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+            case 1:
+                gl.glUseProgram(shaderCard.getShaderProgramID());
 
-        gl.glBindVertexArray(vaoName[29]);
-        gl.glActiveTexture(GL_TEXTURE1);
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[29]);
+                gl.glActiveTexture(GL_TEXTURE1);
+
+                break;
+
+            case 2:
+
+                gl.glUseProgram(shaderK3.getShaderProgramID());
+
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[29]);
+                gl.glActiveTexture(GL_TEXTURE11);
+
+                break;
+
+            case 3:
+
+                gl.glUseProgram(shaderH2.getShaderProgramID());
+
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[29]);
+                gl.glActiveTexture(GL_TEXTURE10);
+
+                break;
+
+            case 4:
+                gl.glUseProgram(shaderP7.getShaderProgramID());
+
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[29]);
+                gl.glActiveTexture(GL_TEXTURE12);
+
+        }
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
 
@@ -1480,38 +1487,358 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniform1f(10, material.getShininess());
     }
 
+    // Draw Card animation
+    private void initCardBack(GL3 gl) {
+        gl.glBindVertexArray(vaoName[31]);
+        shaderCB = new ShaderProgram(gl);
+        shaderCB.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCB);
 
-    // init obj from OBJLoader
+        float[] color0 = {0.0f, 0.0f, 0.0f};
+        float[] cubeVertices = DrawCards.makeCardBackSide(color0);
+        int[] tableIndices = DrawCards.makeCardIndicesForTriangleStrip();
 
-    /*private void initOBJ (GL3 gl) {
-        gl.glBindVertexArray(vaoName[29]);
-        shaderBullet= new ShaderProgram(gl);
-        shaderBullet.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBullet);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[31]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
 
-        TriangleSurface surface = loadOBJVertexCoordinates(Paths.get("objData/probe.obj"));
-        vertexCoordinates = surface.shape.vertices;
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[31]);
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
 
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[29]);
+        initPointer(gl);
 
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexCoordinates.length * Float.BYTES,
-                FloatBuffer.wrap(vertexCoordinates), GL.GL_STATIC_DRAW);
+        gl.glActiveTexture(GL_TEXTURE9);
+        texture = new LoadTexture();
+        texture.loadTexture(gl, "resources/Kartenrückseite.JPG");
 
-        gl.glEnableVertexAttribArray(0);
-        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 6 * Float.BYTES, 0);
-        gl.glEnableVertexAttribArray(1);
-        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 6 * Float.BYTES, 3 * Float.BYTES);
-    }*/
+    }
 
-    /*private void displayOBJ(GL3 gl) {
+    private void displayCardBS(GL3 gl) {
+        gl.glUseProgram(shaderCB.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
-        gl.glBindVertexArray(vaoName[29]);
+        initUniform(gl, lightMain, materialCard);
+
+        gl.glBindVertexArray(vaoName[31]);
+        gl.glActiveTexture(GL_TEXTURE9);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCards.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initCardFront(GL3 gl) {
+
+        int max = 3;
+        int min = 1;
+        zahl = (int)Math.round(Math.random() * (max - min + 1)+ min);
+
+        float[] matEmission = {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matAmbient = {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matDiffuse = {0.5f, 0.5f, 0.5f, 1.0f};
+        float[] matSpecular = {0.7f, 0.7f, 0.7f, 1.0f};
+        float matShininess = 128.0f;
+        materialCard = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glBindVertexArray(vaoName[32]);
+
+        float[] color0 = {0.0f, 0.0f, 0.0f};
+        float[] cVertices = DrawCards.makeCardFrontSide(color0);
+        int[] cIndices = DrawCards.makeCardIndicesForTriangleStrip();
+
+        switch (zahl) {
+
+            case 1:
+
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[32]);
+                gl.glBufferData(GL.GL_ARRAY_BUFFER, cVertices.length * 4,
+                    FloatBuffer.wrap(cVertices), GL.GL_STATIC_DRAW);
+
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[32]);
+                gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, cIndices.length * 4,
+                    IntBuffer.wrap(cIndices), GL.GL_STATIC_DRAW);
+
+                //method to specify the location and data format
+                 initPointer(gl);
+
+                 shaderCard = new ShaderProgram(gl);
+                 shaderCard.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCardKa);
+
+                 gl.glActiveTexture(GL_TEXTURE1);
+                 texture = new LoadTexture();
+                 texture.loadTexture(gl, "resources/Karte.JPG");
+
+                 break;
+
+            case 2:
+
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[32]);
+                gl.glBufferData(GL.GL_ARRAY_BUFFER, cVertices.length * 4,
+                    FloatBuffer.wrap(cVertices), GL.GL_STATIC_DRAW);
+
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[32]);
+                gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, cIndices.length * 4,
+                    IntBuffer.wrap(cIndices), GL.GL_STATIC_DRAW);
+
+                //method to specify the location and data format
+                initPointer(gl);
+
+                shaderK3 = new ShaderProgram(gl);
+                shaderK3.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCardK3);
+
+                gl.glActiveTexture(GL_TEXTURE10);
+                texture = new LoadTexture();
+                texture.loadTexture(gl, "resources/Karo 3.JPG");
+
+                break;
+
+            case 3:
+
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[32]);
+                gl.glBufferData(GL.GL_ARRAY_BUFFER, cVertices.length * 4,
+                        FloatBuffer.wrap(cVertices), GL.GL_STATIC_DRAW);
+
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[32]);
+                gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, cIndices.length * 4,
+                        IntBuffer.wrap(cIndices), GL.GL_STATIC_DRAW);
+
+                //method to specify the location and data format
+                initPointer(gl);
+
+                shaderH2 = new ShaderProgram(gl);
+                shaderH2.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCardH2);
+
+                gl.glActiveTexture(GL_TEXTURE11);
+                texture = new LoadTexture();
+                texture.loadTexture(gl, "resources/heart 2.JPG");
+
+                break;
+
+            case 4:
+
+                gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[32]);
+                gl.glBufferData(GL.GL_ARRAY_BUFFER, cVertices.length * 4,
+                        FloatBuffer.wrap(cVertices), GL.GL_STATIC_DRAW);
+
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[32]);
+                gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, cIndices.length * 4,
+                        IntBuffer.wrap(cIndices), GL.GL_STATIC_DRAW);
+
+                //method to specify the location and data format
+                initPointer(gl);
+
+                shaderP7 = new ShaderProgram(gl);
+                shaderP7.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameCardP7);
+
+                gl.glActiveTexture(GL_TEXTURE12);
+                texture = new LoadTexture();
+                texture.loadTexture(gl, "resources/Pik 7.JPG");
+        }
+    }
+
+    private void displayCardFS(GL3 gl) {
+
+        switch (zahl) {
+
+            case 1:
+                gl.glUseProgram(shaderCard.getShaderProgramID());
+
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[32]);
+                gl.glActiveTexture(GL_TEXTURE1);
+
+                break;
+
+            case 2:
+
+                gl.glUseProgram(shaderK3.getShaderProgramID());
+
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[32]);
+                gl.glActiveTexture(GL_TEXTURE11);
+
+                break;
+
+            case 3:
+
+                gl.glUseProgram(shaderH2.getShaderProgramID());
+
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[32]);
+                gl.glActiveTexture(GL_TEXTURE10);
+
+                break;
+
+            case 4:
+                gl.glUseProgram(shaderP7.getShaderProgramID());
+
+                gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+                gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+                initUniform(gl, lightMain, materialCard);
+
+                gl.glBindVertexArray(vaoName[32]);
+                gl.glActiveTexture(GL_TEXTURE12);
+
+            }
+            gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
+        }
+
+    //draw win animation
+    private void initWA01(GL3 gl) {
+        gl.glBindVertexArray(vaoName[33]);
+        shaderBullet= new ShaderProgram(gl);
+        shaderBullet.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBullet);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        bullet = new DrawBullet(64, 64);
+        float[] bulletVertices = bullet.makeVertices(0.01f, color0);
+        int[] bulletIndices = bullet.makeIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[33]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, bulletVertices.length * 4,
+                FloatBuffer.wrap(bulletVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[33]);
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, bulletIndices.length * 4,
+                IntBuffer.wrap(bulletIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 9*4, 9*4);
+
+        //defines the material properties of the bullet
+        float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.5f, 0.5f, 0,5f, 1.0f};
+        float matShininess = 128.0f;
+        materialBullet = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE8);
+        //texture for the bullet
+        texture = new LoadTexture();
+        texture.loadTexture02(gl, "resources/billiard.jpg");
+    }
+
+    private void displayWA01(GL3 gl) {
+        gl.glUseProgram(shaderBullet.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        initUniform(gl, lightMain, materialBullet);
+
+        gl.glActiveTexture(GL_TEXTURE8);
+        gl.glBindVertexArray(vaoName[33]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+    private void initWA02(GL3 gl) {
+        gl.glBindVertexArray(vaoName[34]);
+        shaderBullet= new ShaderProgram(gl);
+        shaderBullet.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBullet);
+
+        float[] color0 = {0.5f, 0.5f, 0.5f};
+        bullet = new DrawBullet(64, 64);
+        float[] bulletVertices = bullet.makeVertices(0.01f, color0);
+        int[] bulletIndices = bullet.makeIndicesForTriangleStrip();
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[34]);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, bulletVertices.length * 4,
+                FloatBuffer.wrap(bulletVertices), GL.GL_STATIC_DRAW);
+
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[34]);
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, bulletIndices.length * 4,
+                IntBuffer.wrap(bulletIndices), GL.GL_STATIC_DRAW);
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
+        gl.glEnableVertexAttribArray(2);
+        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
+        gl.glEnableVertexAttribArray(3);
+        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 9*4, 9*4);
+
+        //defines the material properties of the bullet
+        float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
+        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
+        float[] matSpecular = {0.5f, 0.5f, 0,5f, 1.0f};
+        float matShininess = 128.0f;
+        materialBullet = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        gl.glActiveTexture(GL_TEXTURE8);
+        //texture for the bullet
+        texture = new LoadTexture();
+        texture.loadTexture02(gl, "resources/billiard.jpg");
+    }
+
+    private void displayWA03(GL3 gl) {
+        gl.glUseProgram(shaderBullet.getShaderProgramID());
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        initUniform(gl, lightMain, materialBullet);
+
+        gl.glActiveTexture(GL_TEXTURE8);
+        gl.glBindVertexArray(vaoName[34]);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+    }
+
+
+
+    // init obj from OBJLoader
+
+    /*private void initOBJ (GL3 gl) {
+    gl.glBindVertexArray(vaoName[30]);
+
+        surface = loadOBJVertexCoordinates(Paths.get("objData/flat.obj"));
+        vertexCoordinates = surface.shape.vertices;
+
+
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[30]);
+
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexCoordinates.length * 4,
+                FloatBuffer.wrap(vertexCoordinates), GL.GL_STATIC_DRAW);
+
+
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 6 * 4, 0);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 6 * 4, 4 *4);
+
+    }
+
+    private void displayOBJ(GL3 gl) {
+
+        gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
+        gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
+
+        gl.glBindVertexArray(vaoName[30]);
         gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertexCoordinates.length / 6);
 
     }
     */
+
 
 
     @Override
@@ -1531,10 +1858,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         // Detach and delete shader program
         gl.glUseProgram(0);
-        ShaderProgram[] shaderPrograms ={shaderTable, shaderBullet, shaderCandleWick, shaderCandleRed, shaderSky, shaderRoomWindow, shaderWall, shaderBottom, shaderCard};
-        for (int i = 0; i <= shaderPrograms.length; i++) {
+        /*ShaderProgram[] shaderPrograms ={shaderTable, shaderBullet, shaderCandleWick, shaderCandleRed, shaderSky, shaderRoomWindow, shaderWall, shaderBottom, shaderCard,
+        shaderP7, shaderK3, shaderH2, shaderCB};
+        for (int i = 0; i < shaderPrograms.length; i++) {
             shaderPrograms[i].deleteShaderProgram();
         }
+        */
         // deactivate VAO and VBO
         gl.glBindVertexArray(0);
         gl.glDisableVertexAttribArray(0);

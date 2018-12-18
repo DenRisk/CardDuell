@@ -1,4 +1,4 @@
-public class DrawCard {
+public class DrawCards {
 
     private static float[] setVerticies(float[] p0, float[] p1, float[] p2, float[] p3, float[] p4, float[] p5, float[] p6, float[] p7, float[] c, float[] nf, float[] nb, float[] nl, float[] nr, float[] nu, float[] nd,
                                         float[] uv00, float[] uv01, float[] uv10, float[] uv11) {
@@ -140,17 +140,17 @@ public class DrawCard {
         return verticies;
     }
 
-    public static float[] makeCardVertices02(float[] color) {
+    public static float[] makeCardBackSide(float[] color) {
 
         //position
-        float[] p0 = {-0.2f, 0.047f, 0.2f};
-        float[] p1 = {-0.1f, 0.047f, 0.2f};
-        float[] p2 = {-0.1f, 0.047f, -0.0f};
-        float[] p3 = {-0.2f, 0.047f, -0.0f};
-        float[] p4 = {-0.2f, 0.045f, 0.2f};
-        float[] p5 = {-0.1f, 0.045f, 0.2f};
-        float[] p6 = {-0.1f, 0.045f, -0.0f};
-        float[] p7 = {-0.2f, 0.045f, -0.0f};
+        float[] p0 = {0.4f, 0.052f, 0.1f};
+        float[] p1 = {0.30f, 0.052f, 0.1f};
+        float[] p2 = {0.30f, 0.052f, -0.1f};
+        float[] p3 = {0.4f, 0.052f, -0.1f};
+        float[] p4 = {0.4f, 0.051f, 0.1f};
+        float[] p5 = {0.30f, 0.051f, 0.1f};
+        float[] p6 = {0.30f, 0.051f, -0.1f};
+        float[] p7 = {0.4f, 0.051f, -0.1f};
 
         //color
         float[] c = color;
@@ -164,10 +164,44 @@ public class DrawCard {
         float[] nd = {0, -1, 0}; // 0 down (bottom)
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv01 = {0, 0}; // u = 0, v = 0
-        float[] uv00 = {0, 1}; // u = 0, v = 1
-        float[] uv11 = {1, 0}; // u = 1, v = 0
-        float[] uv10 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0}; // u = 0, v = 0
+        float[] uv01 = {0, 1}; // u = 0, v = 1
+        float[] uv10 = {1, 0}; // u = 1, v = 0
+        float[] uv11 = {1, 1}; // u = 1, v = 1
+
+        float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
+
+        return verticies;
+    }
+
+    public static float[] makeCardFrontSide(float[] color) {
+
+        //position
+        float[] p0 = {0.4f, 0.0509f, 0.1f};
+        float[] p1 = {0.30f, 0.0509f, 0.1f};
+        float[] p2 = {0.30f, 0.0509f, -0.1f};
+        float[] p3 = {0.4f, 0.0509f, -0.1f};
+        float[] p4 = {0.4f, 0.05f, 0.1f};
+        float[] p5 = {0.30f, 0.05f, 0.1f};
+        float[] p6 = {0.30f, 0.05f, -0.1f};
+        float[] p7 = {0.4f, 0.05f, -0.1f};
+
+        //color
+        float[] c = color;
+
+        //normalvector
+        float[] nf = {0, 0, 1}; // 0 front
+        float[] nb = {0, 0, -1}; // 0 back
+        float[] nl = {-1, 0, 0}; // 0 left
+        float[] nr = {1, 0, 0}; // 0 right
+        float[] nu = {0, 1, 0}; // 0 up (top)
+        float[] nd = {0, -1, 0}; // 0 down (bottom)
+
+        // Definition of texture coordinates for cuboid surfaces
+        float[] uv00 = {0, 0}; // u = 0, v = 0
+        float[] uv01 = {0, 1}; // u = 0, v = 1
+        float[] uv10 = {1, 0}; // u = 1, v = 0
+        float[] uv11 = {1, 1}; // u = 1, v = 1
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -192,6 +226,4 @@ public class DrawCard {
     public static int noOfIndicesForCard() {
         return 28;
     }
-
-
 }
