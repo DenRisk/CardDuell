@@ -38,10 +38,14 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     final String fragmentShaderFileNameCandleWick = "BlinnPhongPointTexCandleWick.frag";
     final String fragmentShaderFileNameBullet = "BlinnPhongPointTexBullet.frag";
     final String fragmentShaderFileNameCB = "BlinnPhongPointTexCardBackside.frag";
+    final String fragmentShaderFileNameWinAnimation = "BlinnPhongPointTexCardWinAnimation.frag";
+    final String fragmentShaderFileNameEnemyCard = "BlinnPhongPointTexCardKreuz10.frag";
+
 
 
     private ShaderProgram shaderTable;
     private ShaderProgram shaderCard;
+    private ShaderProgram shaderEnemyCard;
     private ShaderProgram shaderBottom;
     private ShaderProgram shaderWall;
     private ShaderProgram shaderRoomWindow;
@@ -53,6 +57,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private ShaderProgram shaderH2;
     private ShaderProgram shaderK3;
     private ShaderProgram shaderP7;
+    private ShaderProgram shaderWinAnimation;
 
     private LightSource lightMain;
     private Material materialWindowFrame;
@@ -65,6 +70,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private Material materialCandle;
     private Material materialBullet;
     private Material materialWindowpane;
+    private Material materialWinAnimation;
 
     private DrawCandle candle1;
     private DrawCandle candle2;
@@ -80,6 +86,15 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private TriangleSurface surface;
 
     private float angle;
+    private float angle02;
+    private float angle03;
+    private float angle04;
+    private float angle05;
+    private float angle06;
+    private float angleE01;
+    private float angleW01;
+
+    private boolean rot;
 
     private JButton button;
 
@@ -123,7 +138,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         else
             System.out.println("VBO support is available");
 
-        int noOfObjects = 35;
+        int noOfObjects = 36;
 
         vaoName = new int[noOfObjects];
         for (int i = 0; i < vaoName.length; i++) {
@@ -168,6 +183,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         initCardBack(gl);
         initCardFront(gl);
+        initEnemyCard(gl);
 
         initRoomBack(gl);
         initRoomLeft(gl);
@@ -199,8 +215,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         initCardCopy(gl);
 
        // initOBJ(gl);
-         initWA01(gl);
-         initWA02(gl);
+        initWinAnimation(gl);
 
         gl.glCullFace(GL.GL_BACK);
         gl.glEnable(GL.GL_DEPTH_TEST);
@@ -240,9 +255,72 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
                     displayCardBS(gl);
                     displayCardFS(gl);
                 } else if (angle == 180) {
+                    pmvMatrix.glPushMatrix();
                     pmvMatrix.glTranslatef(0.0f, -0.045f, +0.0f);
                     displayCardCopy(gl);
+                    pmvMatrix.glPopMatrix();
+                    rot = true;
+
+                    if (angle02<0.5 && angle03<0.5 && zahl ==1 ) {
+                        pmvMatrix.glPushMatrix();
+                        pmvMatrix.glTranslatef(angle03, angle02, 0);
+                        angle02 = (float) (angle02+0.005);
+                        angle03 = (float) (angle03+0.002);
+                        pmvMatrix.glTranslatef(-0.15f, 0.08f, 0.1f);
+                        displayWinAnimation(gl);
+                        pmvMatrix.glPopMatrix();
+                    }if (angle02<0.5 && angle04>-0.5 && zahl ==1){
+                        pmvMatrix.glPushMatrix();
+                        pmvMatrix.glTranslatef(angle04, angle02, 0);
+                        angle02 = (float) (angle02+0.005);
+                        angle04 = (float) (angle04-0.002);
+                        pmvMatrix.glTranslatef(-0.15f, 0.08f, 0.1f);
+                        displayWinAnimation(gl);
+                        pmvMatrix.glPopMatrix();
+                    }if (angle02<0.5 && angle05>-0.5 && zahl ==1) {
+                        pmvMatrix.glPushMatrix();
+                        pmvMatrix.glTranslatef(0, angle02, angle05);
+                        angle02 = (float) (angle02 + 0.005);
+                        angle05 = (float) (angle05 - 0.0021);
+                        pmvMatrix.glTranslatef(-0.15f, 0.08f, 0.1f);
+                        displayWinAnimation(gl);
+                        pmvMatrix.glPopMatrix();
+                    }if (angle02<0.5 && angle06<0.5 && zahl ==1) {
+                        pmvMatrix.glPushMatrix();
+                        pmvMatrix.glTranslatef(0, angle02, angle06);
+                        angle02 = (float) (angle02 + 0.005);
+                        angle06 = (float) (angle06 + 0.0019);
+                        pmvMatrix.glTranslatef(-0.15f, 0.08f, 0.1f);
+                        displayWinAnimation(gl);
+                        pmvMatrix.glPopMatrix();
+                    }if (zahl == 1) {
+
+                    }
                 }
+        pmvMatrix.glPopMatrix();
+
+        pmvMatrix.glPushMatrix();
+
+
+        pmvMatrix.glPushMatrix();
+
+            if (rot == true && zahl !=1) {
+                pmvMatrix.glTranslatef(0, -0.02f, 0);
+            }
+            displayEnemyCard(gl);
+        pmvMatrix.glPopMatrix();
+            pmvMatrix.glTranslatef(-0.45f, +0.051f, +0.1f);
+        if (angleE01<360 && zahl != 1 && rot == true) {
+            pmvMatrix.glRotatef(angleE01, 0,1,0);
+            pmvMatrix.glTranslatef(0.45f, -0.051f, -0.1f);
+            displayEnemyCard(gl);
+            angleE01 = angleE01 + 2;
+        }else if (angleE01==360){
+            pmvMatrix.glPopMatrix();
+            displayEnemyCard(gl);
+            pmvMatrix.glPushMatrix();
+        }
+
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
@@ -1696,14 +1774,16 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         }
 
     //draw win animation
-    private void initWA01(GL3 gl) {
+    //Bullet for Win Animation
+
+    private void initWinAnimation(GL3 gl) {
         gl.glBindVertexArray(vaoName[33]);
-        shaderBullet= new ShaderProgram(gl);
-        shaderBullet.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBullet);
+        shaderWinAnimation= new ShaderProgram(gl);
+        shaderWinAnimation.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameWinAnimation);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         bullet = new DrawBullet(64, 64);
-        float[] bulletVertices = bullet.makeVertices(0.01f, color0);
+        float[] bulletVertices = bullet.makeVertices(0.03f, color0);
         int[] bulletIndices = bullet.makeIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[33]);
@@ -1723,87 +1803,71 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnableVertexAttribArray(3);
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 9*4, 9*4);
 
-        //defines the material properties of the bullet
+        //defines the material properties for the windowpane
         float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
-        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
+        float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
         float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.5f, 0.5f, 0,5f, 1.0f};
+        float[] matSpecular = {0.6f, 0.6f, 0.6f, 5.0f};
         float matShininess = 128.0f;
-        materialBullet = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+        materialWinAnimation = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
-        gl.glActiveTexture(GL_TEXTURE8);
-        //texture for the bullet
+        gl.glActiveTexture(GL_TEXTURE13);
+        //texture for WinAnimation
         texture = new LoadTexture();
-        texture.loadTexture02(gl, "resources/billiard.jpg");
+        texture.loadTexture(gl, "resources/GelbTex.JPG");
+
     }
 
-    private void displayWA01(GL3 gl) {
-        gl.glUseProgram(shaderBullet.getShaderProgramID());
+    private void displayWinAnimation(GL3 gl) {
+        gl.glUseProgram(shaderWinAnimation.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
-        initUniform(gl, lightMain, materialBullet);
+        initUniform(gl, lightMain, materialWinAnimation);
 
-        gl.glActiveTexture(GL_TEXTURE8);
+        gl.glActiveTexture(GL_TEXTURE13);
         gl.glBindVertexArray(vaoName[33]);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
     }
 
-    private void initWA02(GL3 gl) {
+    // Draw the enemy card
+    private void initEnemyCard(GL3 gl) {
         gl.glBindVertexArray(vaoName[34]);
-        shaderBullet= new ShaderProgram(gl);
-        shaderBullet.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameBullet);
+        shaderEnemyCard= new ShaderProgram(gl);
+        shaderEnemyCard.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameEnemyCard);
 
-        float[] color0 = {0.5f, 0.5f, 0.5f};
-        bullet = new DrawBullet(64, 64);
-        float[] bulletVertices = bullet.makeVertices(0.01f, color0);
-        int[] bulletIndices = bullet.makeIndicesForTriangleStrip();
+        float[] color0 = {0.0f, 0.0f, 0.0f};
+        float[] cubeVertices = DrawCard.makeCardVerticesEnemyCard(color0);
+        int[] tableIndices = DrawCard.makeCardIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[34]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, bulletVertices.length * 4,
-                FloatBuffer.wrap(bulletVertices), GL.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
+                FloatBuffer.wrap(cubeVertices), GL.GL_STATIC_DRAW);
 
         gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[34]);
-        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, bulletIndices.length * 4,
-                IntBuffer.wrap(bulletIndices), GL.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
+                IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
 
-        gl.glEnableVertexAttribArray(0);
-        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 9*4, 0);
-        gl.glEnableVertexAttribArray(1);
-        gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 9*4, 3*4);
-        gl.glEnableVertexAttribArray(2);
-        gl.glVertexAttribPointer(2, 3, GL.GL_FLOAT, false, 9*4, 6*4);
-        gl.glEnableVertexAttribArray(3);
-        gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 9*4, 9*4);
+        initPointer(gl);
 
-        //defines the material properties of the bullet
-        float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
-        float[] matAmbient =  {0.3f, 0.3f, 0.3f, 1.0f};
-        float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.5f, 0.5f, 0,5f, 1.0f};
-        float matShininess = 128.0f;
-        materialBullet = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
-
-        gl.glActiveTexture(GL_TEXTURE8);
-        //texture for the bullet
+        gl.glActiveTexture(GL_TEXTURE14);
         texture = new LoadTexture();
-        texture.loadTexture02(gl, "resources/billiard.jpg");
+        texture.loadTexture(gl, "resources/Kreuz10.JPG");
     }
 
-    private void displayWA03(GL3 gl) {
-        gl.glUseProgram(shaderBullet.getShaderProgramID());
+    private void displayEnemyCard(GL3 gl) {
+        gl.glUseProgram(shaderEnemyCard.getShaderProgramID());
 
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
-        initUniform(gl, lightMain, materialBullet);
+        initUniform(gl, lightMain, materialCard);
 
-        gl.glActiveTexture(GL_TEXTURE8);
         gl.glBindVertexArray(vaoName[34]);
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
+        gl.glActiveTexture(GL_TEXTURE14);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
-
 
 
     // init obj from OBJLoader
