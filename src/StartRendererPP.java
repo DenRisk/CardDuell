@@ -92,11 +92,9 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     private float angle05;
     private float angle06;
     private float angleE01;
-    private float angleW01;
+
 
     private boolean rot;
-
-    private JButton button;
 
     private int zahl;
 
