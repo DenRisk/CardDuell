@@ -1,3 +1,11 @@
+/**
+ *
+ * @author Karsten Lehn
+ * @modified by Denis Niklas Risken
+ *
+ * Die Klasse wurde aus der der Datei JoglBoxLightTexPP von der Lernplattform übernommen und bearbeitet
+ *
+ */
 
 public class LightSource {
     private float[] position;
@@ -13,6 +21,11 @@ public class LightSource {
         this.specular = specular;
     }
 
+
+    /**
+     * @modified by Denis Niklas Risken
+     * Ein weiterer Konstruktur mit einem Spotlight wurde hinzugefügt
+     */
     public LightSource(float[] position, float[] ambient, float[] diffuse, float[] specular, float[] lightSpot) {
         this.position = position;
         this.ambient = ambient;

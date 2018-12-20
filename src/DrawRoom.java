@@ -15,21 +15,21 @@ public class DrawRoom {
     public static float[] makeRoomBackVertices(float[] color) {
 
         // Definition of positions of vertices for a cuboid
-        float[] p0 = {3.5f, -0.6f, -4.0f}; // 0
-        float[] p1 = {-3.5f, -0.6f, -4.0f}; // 1
-        float[] p2 = {-3.5f, 3f, -4.0f}; // 2
-        float[] p3 = {3.5f, 3f, -4.0f}; // 3
+        float[] p0 = {3.5f, -0.6f, -4.0f};
+        float[] p1 = {-3.5f, -0.6f, -4.0f};
+        float[] p2 = {-3.5f, 3f, -4.0f};
+        float[] p3 = {3.5f, 3f, -4.0f};
 
         // color vector
         float[] c = color;
         // Definition of normal vectors for cuboid surfaces
-        float[] nf = {0, 0, 1}; // front
+        float[] nf = {0, 0, 1};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = {
                 //index: 0
@@ -70,21 +70,22 @@ public class DrawRoom {
     public static float[] makeRoomLeftVertices(float[] color) {
 
         // Definition of positions of vertices for a cuboid
-        float[] p0 = {-3.5f, -0.6f, -4.0f}; // 0
-        float[] p1 = {-3.5f, -0.6f, 4.0f}; // 1
-        float[] p2 = {-3.5f, 3f, 4.0f}; // 2
-        float[] p3 = {-3.5f, 3f, -4.0f}; // 3
+        float[] p0 = {-3.5f, -0.6f, -4.0f};
+        float[] p1 = {-3.5f, -0.6f, 4.0f};
+        float[] p2 = {-3.5f, 3f, 4.0f};
+        float[] p3 = {-3.5f, 3f, -4.0f};
 
         // color vector
         float[] c = color;
+
         // Definition of normal vectors for cuboid surfaces
-        float[] nl = {1, 0, 0}; // 0 left
+        float[] nl = {1, 0, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = {
                 //index: 0
@@ -125,22 +126,22 @@ public class DrawRoom {
     public static float[] makeRoomRightVertices(float[] color) {
 
         // Definition of positions of vertices for a cuboid
-        float[] p0 = {3.5f, -0.6f, 4.0f}; // 0
-        float[] p1 = {3.5f, -0.6f, -4.0f}; // 1
-        float[] p2 = {3.5f, 3f, -4.0f}; // 2
-        float[] p3 = {3.5f, 3f, 4.0f}; // 3
+        float[] p0 = {3.5f, -0.6f, 4.0f};
+        float[] p1 = {3.5f, -0.6f, -4.0f};
+        float[] p2 = {3.5f, 3f, -4.0f};
+        float[] p3 = {3.5f, 3f, 4.0f};
 
         // color vector
         float[] c = color;
         // Definition of normal vectors for cuboid surfaces
 
-        float[] nr = {-1, 0, 0}; // 0 right
+        float[] nr = {-1, 0, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = {
                 //index: 0
@@ -179,22 +180,22 @@ public class DrawRoom {
     public static float[] makeRoomFrontVertices(float[] color) {
 
         // Definition of positions of vertices for a cuboid
-        float[] p0 = {-3.5f, -0.6f, 4.0f}; // 0
-        float[] p1 = {3.5f, -0.6f, 4.0f}; // 1
-        float[] p2 = {3.5f, 3f, 4.0f}; // 2 f
-        float[] p3 = {-3.5f, 3f, 4.0f}; // 3
+        float[] p0 = {-3.5f, -0.6f, 4.0f};
+        float[] p1 = {3.5f, -0.6f, 4.0f};
+        float[] p2 = {3.5f, 3f, 4.0f};
+        float[] p3 = {-3.5f, 3f, 4.0f};
 
         // color vector
         float[] c = color;
         // Definition of normal vectors for cuboid surfaces
 
-        float[] nf = {0, 0, -1}; // 0
+        float[] nf = {0, 0, -1};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = {
                 //index: 0
@@ -233,22 +234,22 @@ public class DrawRoom {
     public static float[] makeRoomBottomVertices(float[] color) {
 
         // Definition of positions of vertices for a cuboid
-        float[] p0 = {-3.5f, -0.6f, -4.0f}; // 0
-        float[] p1 = {3.5f, -0.6f, -4.0f}; // 1
-        float[] p2 = {3.5f, -0.6f, 4.0f}; // 2
-        float[] p3 = {-3.5f, -0.6f, 4.0f}; // 3
+        float[] p0 = {-3.5f, -0.6f, -4.0f};
+        float[] p1 = {3.5f, -0.6f, -4.0f};
+        float[] p2 = {3.5f, -0.6f, 4.0f};
+        float[] p3 = {-3.5f, -0.6f, 4.0f};
 
         // color vector
         float[] c = color;
         // Definition of normal vectors for cuboid surfaces
 
-        float[] nd = { 0, 1,  0}; // 0 down (bottom)
+        float[] nd = { 0, 1,  0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = {
                 //index: 0
@@ -287,22 +288,22 @@ public class DrawRoom {
     public static float[] makeRoomTopVertices(float[] color) {
 
         // Definition of positions of vertices for a cuboid
-        float[] p0 = {-3.5f, 3f, 4.0f}; // 0
-        float[] p1 = {3.5f, 3f, 4.0f}; // 1
-        float[] p2 = {3.5f, 3f, -4.0f}; // 2
-        float[] p3 = {-3.5f, 3f, -4.0f}; // 3
+        float[] p0 = {-3.5f, 3f, 4.0f};
+        float[] p1 = {3.5f, 3f, 4.0f};
+        float[] p2 = {3.5f, 3f, -4.0f};
+        float[] p3 = {-3.5f, 3f, -4.0f};
 
         // color vector
         float[] c = color;
         // Definition of normal vectors for cuboid surfaces
 
-        float[] nd = { 0, -1,  0}; // 0 down (bottom)
+        float[] nd = { 0, -1,  0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = {
                 //index: 0
@@ -347,7 +348,7 @@ public class DrawRoom {
 
     /**
      *@modified by Denis Niklas Risken
-     *@method: noOfIndicesForCard()
+     *@method: noOfIndicesForRoom()
      *Diese Methode habe ich vollständig übernommen. Die Methode habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
      *
      *@function: Gibt einen int Wert zurück, der angibt wie viele Punkte gebraucht werden (siehe makeCardIndicesForTriangleStrip()), um das Objekt zu zeichnen.

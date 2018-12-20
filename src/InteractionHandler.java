@@ -6,6 +6,8 @@ import java.awt.event.*;
  * Intented to be used for an OpenGL scene renderer.
  * @author Karsten Lehn
  * @version 23.8.2017, 10.9.2017
+ *
+ * Diese Klasse wurde vollständig aus den Datein der Lerplattform z.B. JoglBoxLightTex.zip übernommen
  */
 
 public class InteractionHandler implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener{

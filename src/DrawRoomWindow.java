@@ -180,18 +180,18 @@ public class DrawRoomWindow {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -221,18 +221,18 @@ public class DrawRoomWindow {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -262,18 +262,18 @@ public class DrawRoomWindow {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -303,18 +303,18 @@ public class DrawRoomWindow {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -344,18 +344,18 @@ public class DrawRoomWindow {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -372,14 +372,13 @@ public class DrawRoomWindow {
     public static int[] makeRWIndicesForTriangleStrip() {
 
         int[] indices = {
-                // Note: back faces are drawn,
-                // but drawing is faster than using "GL_TRIANGLES"
-                21, 23, 20, 22,         // down (bottom)
-                1, 3, 0, 2, 2, 3,       // front
-                12, 13, 14, 15,         // right
-                4, 5, 6, 7,             // back
-                8, 9, 10, 11, 10, 10,   // left
-                16, 17, 18, 19          // up (top)
+
+                21, 23, 20, 22,
+                1, 3, 0, 2, 2, 3,
+                12, 13, 14, 15,
+                4, 5, 6, 7,
+                8, 9, 10, 11, 10, 10,
+                16, 17, 18, 19
         };
         return indices;
     }

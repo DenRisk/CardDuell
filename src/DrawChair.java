@@ -213,11 +213,11 @@ public class DrawChair {
     public static float[] makelegVRVertices(float[] color) {
 
         //position
-        float[] p0 = {2.0f, -0.3f, 0.2f}; //top
+        float[] p0 = {2.0f, -0.3f, 0.2f};
         float[] p1 = {1.95f, -0.3f, 0.2f};
         float[] p2 = {1.95f, -0.3f, 0.15f};
         float[] p3 = {2.0f, -0.3f, 0.15f};
-        float[] p4 = {2.0f, -0.6f, 0.2f}; //top
+        float[] p4 = {2.0f, -0.6f, 0.2f};
         float[] p5 = {1.95f, -0.6f, 0.2f};
         float[] p6 = {1.95f, -0.6f, 0.15f};
         float[] p7 = {2.0f, -0.6f, 0.15f};
@@ -226,18 +226,18 @@ public class DrawChair {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -256,11 +256,11 @@ public class DrawChair {
     public static float[] makelegHRVertices(float[] color) {
 
         //position
-        float[] p0 = {2.0f, 0.5f, -0.2f}; //top
+        float[] p0 = {2.0f, 0.5f, -0.2f};
         float[] p1 = {1.95f, 0.5f, -0.2f};
         float[] p2 = {1.95f, 0.5f, -0.15f};
         float[] p3 = {2.0f, 0.5f, -0.15f};
-        float[] p4 = {2.0f, -0.6f, -0.2f}; //top
+        float[] p4 = {2.0f, -0.6f, -0.2f};
         float[] p5 = {1.95f, -0.6f, -0.2f};
         float[] p6 = {1.95f, -0.6f, -0.15f};
         float[] p7 = {2.0f, -0.6f, -0.15f};
@@ -269,18 +269,18 @@ public class DrawChair {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -299,11 +299,11 @@ public class DrawChair {
     public static float[] makelegHLVertices(float[] color) {
 
         //position
-        float[] p0 = {1.5f, 0.5f, -0.2f}; //top
+        float[] p0 = {1.5f, 0.5f, -0.2f};
         float[] p1 = {1.45f, 0.5f, -0.2f};
         float[] p2 = {1.45f, 0.5f, -0.15f};
         float[] p3 = {1.50f, 0.5f, -0.15f};
-        float[] p4 = {1.5f, -0.6f, -0.2f}; //top
+        float[] p4 = {1.5f, -0.6f, -0.2f};
         float[] p5 = {1.45f, -0.6f, -0.2f};
         float[] p6 = {1.45f, -0.6f, -0.15f};
         float[] p7 = {1.50f, -0.6f, -0.15f};
@@ -312,18 +312,18 @@ public class DrawChair {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -342,11 +342,11 @@ public class DrawChair {
     public static float[] makelegseatVertices(float[] color) {
 
         //position
-        float[] p0 = {1.45f, -0.25f, -0.15f}; //top
+        float[] p0 = {1.45f, -0.25f, -0.15f};
         float[] p1 = {2.0f, -0.25f, -0.15f};
         float[] p2 = {2.0f, -0.25f, 0.2f};
         float[] p3 = {1.45f, -0.25f, 0.2f};
-        float[] p4 = {1.45f, -0.3f, -0.15f}; //top
+        float[] p4 = {1.45f, -0.3f, -0.15f};
         float[] p5 = {2.0f, -0.3f, -0.15f};
         float[] p6 = {2.0f, -0.3f, 0.2f};
         float[] p7 = {1.45f, -0.3f, 0.2f};
@@ -355,18 +355,18 @@ public class DrawChair {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -385,11 +385,11 @@ public class DrawChair {
     public static float[] makelean1Vertices(float[] color) {
 
         //position
-        float[] p0 = {1.5f, 0.45f, -0.19f}; //top
+        float[] p0 = {1.5f, 0.45f, -0.19f};
         float[] p1 = {1.95f, 0.45f, -0.19f};
         float[] p2 = {1.95f, 0.45f, -0.16f};
         float[] p3 = {1.5f, 0.45f, -0.16f};
-        float[] p4 = {1.5f, 0.30f, -0.19f}; //top
+        float[] p4 = {1.5f, 0.30f, -0.19f};
         float[] p5 = {1.95f, 0.30f, -0.19f};
         float[] p6 = {1.95f, 0.30f, -0.16f};
         float[] p7 = {1.5f, 0.30f, -0.16f};
@@ -397,18 +397,18 @@ public class DrawChair {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -427,11 +427,11 @@ public class DrawChair {
     public static float[] makelean2Vertices(float[] color) {
 
         //position
-        float[] p0 = {1.5f, 0.25f, -0.19f}; //top
+        float[] p0 = {1.5f, 0.25f, -0.19f};
         float[] p1 = {1.95f, 0.25f, -0.19f};
         float[] p2 = {1.95f, 0.25f, -0.16f};
         float[] p3 = {1.5f, 0.25f, -0.16f};
-        float[] p4 = {1.5f, 0.10f, -0.19f}; //top
+        float[] p4 = {1.5f, 0.10f, -0.19f};
         float[] p5 = {1.95f, 0.10f, -0.19f};
         float[] p6 = {1.95f, 0.10f, -0.16f};
         float[] p7 = {1.5f, 0.10f, -0.16f};
@@ -439,18 +439,18 @@ public class DrawChair {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -469,12 +469,12 @@ public class DrawChair {
 
         int[] indices = {
 
-                21, 23, 20, 22,         // down (bottom)
-                1, 3, 0, 2, 2, 3,       // front
-                12, 13, 14, 15,         // right
-                4, 5, 6, 7,             // back
-                8, 9, 10, 11, 10, 10,   // left
-                16, 17, 18, 19          // up (top)
+                21, 23, 20, 22,
+                1, 3, 0, 2, 2, 3,
+                12, 13, 14, 15,
+                4, 5, 6, 7,
+                8, 9, 10, 11, 10, 10,
+                16, 17, 18, 19
         };
         return indices;
     }

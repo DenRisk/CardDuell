@@ -1,7 +1,21 @@
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-
 public class DrawTable {
+/**
+ * @modified by Denis Niklas Risken
+ * @author Karsten Lehn
+ * @version 21.10.2017, 27.10.2017
+ * @object Tisch im Raum
+ */
+
+/**
+ *@modified by Denis Niklas Risken
+ *@method: setVerticies()
+ *
+ *Die Methode habe ich selber geschrieben, um den Code zu reduzieren. Den Inhalt habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+ *Dabei habe ich teilweise leichte Änderungen der Variablen durchgeführt.
+ *@Function: Gibt die Indizes mit passenden Positionen, Normalen, Farbe und Texturkoordinaten wieder.
+ */
+
+
 
     private static float[] setVerticies(float[] p0, float[] p1, float[] p2, float[] p3, float[] p4, float[] p5, float[] p6, float[] p7, float[] c, float[] nf, float[] nb, float[] nl, float[] nr, float[] nu, float[] nd,
                                         float[] uv00, float[] uv01, float[] uv10, float[] uv11) {
@@ -143,6 +157,17 @@ public class DrawTable {
         return verticies;
     }
 
+
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: makeBoxVertices
+     *
+     *Die Methode habe ich übernommen. Den Inhalt habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *Di Methode dient dazu den Tisch in den Ursprung zu erstellen
+     *@Function: Positionen, Normalen, Farbe und Texturkoordinaten für das Objekt werden definiert. Dabei wird die Methode setVerticies() aufgerufen,
+     *           in einem float[] gespeichert und zurückgegeben.
+     */
+
     public static float[] makeBoxVertices(float width, float height, float depth, float[] color) {
 
         //position
@@ -159,52 +184,43 @@ public class DrawTable {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
         return verticies;
     }
 
-    public static int[] makeBoxIndicesForTriangleStrip() {
-
-        int[] indices = {
-                // Note: back faces are drawn,
-                // but drawing is faster than using "GL_TRIANGLES"
-                21, 23, 20, 22,         // down (bottom)
-                1, 3, 0, 2, 2, 3,       // front
-                12, 13, 14, 15,         // right
-                4, 5, 6, 7,             // back
-                8, 9, 10, 11, 10, 10,   // left
-                16, 17, 18, 19          // up (top)
-        };
-        return indices;
-    }
-
-    public static int noOfIndicesForBox() {
-        return 28;
-    }
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: tableLegVRVerticices()
+     *
+     *Die Methode habe ich übernommen und bearbeitet. Den Inhalt habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *Ich habe eigenständig Koordinaten der Eckpunkte überlegt und dadurch die Parameter der Methode reduziert.
+     *@Function: Positionen, Normalen, Farbe und Texturkoordinaten für das Objekt werden definiert. Dabei wird die Methode setVerticies() aufgerufen,
+     *           in einem float[] gespeichert und zurückgegeben.
+     */
 
     // Tischbein von Vorne Rechts (VR)
 
     public static float[] tableLegVRVerticices(float[] color) {
 
-        float[] p0 = {0.75f, -0.05f, 0.55f}; //top
+        float[] p0 = {0.75f, -0.05f, 0.55f};
         float[] p1 = {0.7f, -0.05f, 0.55f};
         float[] p2 = {0.7f, -0.05f, 0.5f};
         float[] p3 = {0.75f, -0.05f, 0.5f};
-        float[] p4 = {0.75f, -0.6f, 0.55f}; //bot
+        float[] p4 = {0.75f, -0.6f, 0.55f};
         float[] p5 = {0.7f, -0.6f, 0.55f};
         float[] p6 = {0.7f, -0.6f, 0.5f};
         float[] p7 = {0.75f, -0.6f, 0.5f};
@@ -212,51 +228,40 @@ public class DrawTable {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
         return verticies;
     }
 
-    public static int[] makeVRLegIndicesForTriangleStrip() {
-
-        int[] indices = {
-                // Note: back faces are drawn,
-                // but drawing is faster than using "GL_TRIANGLES"
-                21, 23, 20, 22,         // down (bottom)
-                1, 3, 0, 2, 2, 3,       // front
-                12, 13, 14, 15,         // right
-                4, 5, 6, 7,             // back
-                8, 9, 10, 11, 10, 10,   // left
-                16, 17, 18, 19          // up (top)
-        };
-        return indices;
-    }
-
-    public static int noOfIndicesForVRLeg() {
-        return 28;
-    }
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: tableLegVLVerticices()
+     *
+     *Folgende Operationen wiederholen sich.
+     *siehe Oben (method: tableLegVRVerticices())
+     */
 
     // Tischbein von Vorne Links (VL)
 
     public static float[] tableLegVLVerticices(float[] color) {
 
-        float[] p0 = {-0.7f, -0.05f, 0.55f}; //top
+        float[] p0 = {-0.7f, -0.05f, 0.55f};
         float[] p1 = {-0.75f, -0.05f, 0.55f};
         float[] p2 = {-0.75f, -0.05f, 0.5f};
         float[] p3 = {-0.7f, -0.05f, 0.5f};
-        float[] p4 = {-0.7f, -0.6f, 0.55f}; //top
+        float[] p4 = {-0.7f, -0.6f, 0.55f};
         float[] p5 = {-0.75f, -0.6f, 0.55f};
         float[] p6 = {-0.75f, -0.6f, 0.5f};
         float[] p7 = {-0.7f, -0.6f, 0.5f};
@@ -264,12 +269,12 @@ public class DrawTable {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
         float[] uv00 = {0, 0}; // u = 0, v = 0
@@ -281,34 +286,23 @@ public class DrawTable {
         return verticies;
     }
 
-    public static int[] makeVLLegIndicesForTriangleStrip() {
-
-        int[] indices = {
-                // Note: back faces are drawn,
-                // but drawing is faster than using "GL_TRIANGLES"
-                21, 23, 20, 22,         // down (bottom)
-                1, 3, 0, 2, 2, 3,       // front
-                12, 13, 14, 15,         // right
-                4, 5, 6, 7,             // back
-                8, 9, 10, 11, 10, 10,   // left
-                16, 17, 18, 19          // up (top)
-        };
-        return indices;
-    }
-
-    public static int noOfIndicesForVLLeg() {
-        return 28;
-    }
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: tableLegHLVerticices()
+     *
+     *Folgende Operationen wiederholen sich.
+     *siehe Oben (method: tableLegVRVerticices())
+     */
 
     //Tischbein von Hinten Links (HL)
 
     public static float[] tableLegHLVerticices(float[] color) {
 
-        float[] p0 = {-0.7f, -0.05f, -0.5f}; //top
+        float[] p0 = {-0.7f, -0.05f, -0.5f};
         float[] p1 = {-0.75f, -0.05f, -0.5f};
         float[] p2 = {-0.75f, -0.05f, -0.55f};
         float[] p3 = {-0.7f, -0.05f, -0.55f};
-        float[] p4 = {-0.7f, -0.6f, -0.5f}; //top
+        float[] p4 = {-0.7f, -0.6f, -0.5f};
         float[] p5 = {-0.75f, -0.6f, -0.5f};
         float[] p6 = {-0.75f, -0.6f, -0.55f};
         float[] p7 = {-0.7f, -0.6f, -0.55f};
@@ -316,50 +310,39 @@ public class DrawTable {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
         return verticies;
     }
 
-    public static int[] makeHLLegIndicesForTriangleStrip() {
-
-        int[] indices = {
-                // Note: back faces are drawn,
-                // but drawing is faster than using "GL_TRIANGLES"
-                21, 23, 20, 22,         // down (bottom)
-                1, 3, 0, 2, 2, 3,       // front
-                12, 13, 14, 15,         // right
-                4, 5, 6, 7,             // back
-                8, 9, 10, 11, 10, 10,   // left
-                16, 17, 18, 19          // up (top)
-        };
-        return indices;
-    }
-
-    public static int noOfIndicesForHLLeg() {
-        return 28;
-    }
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: tableLegHRVerticices()
+     *
+     *Folgende Operationen wiederholen sich.
+     *siehe Oben (method: tableLegVRVerticices())
+     */
 
 
     public static float[] tableLegHRVerticices(float[] color) {
 
-        float[] p0 = {0.75f, -0.05f, -0.5f}; //top
+        float[] p0 = {0.75f, -0.05f, -0.5f};
         float[] p1 = {0.7f, -0.05f, -0.5f};
         float[] p2 = {0.7f, -0.05f, -0.55f};
         float[] p3 = {0.75f, -0.05f, -0.55f};
-        float[] p4 = {0.75f, -0.6f, -0.5f}; //bot
+        float[] p4 = {0.75f, -0.6f, -0.5f};
         float[] p5 = {0.7f, -0.6f, -0.5f};
         float[] p6 = {0.7f, -0.6f, -0.55f};
         float[] p7 = {0.75f, -0.6f, -0.55f};
@@ -367,39 +350,53 @@ public class DrawTable {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv00 = {0, 0}; // u = 0, v = 0
-        float[] uv01 = {0, 1}; // u = 0, v = 1
-        float[] uv10 = {1, 0}; // u = 1, v = 0
-        float[] uv11 = {1, 1}; // u = 1, v = 1
+        float[] uv00 = {0, 0};
+        float[] uv01 = {0, 1};
+        float[] uv10 = {1, 0};
+        float[] uv11 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
         return verticies;
     }
 
-    public static int[] makeHRLegIndicesForTriangleStrip() {
+    /**
+     *@method: makeTableIndicesForTriangleStrip()
+     *Diese Methode habe ich vollständig übernommen. Die Methode habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *
+     *@function: Gibt die Indizes zurück, in welcher Reihenfolge der Indizes gezeichnet werden sollen
+     */
+
+
+    public static int[] makeTableIndicesForTriangleStrip() {
 
         int[] indices = {
-                // Note: back faces are drawn,
-                // but drawing is faster than using "GL_TRIANGLES"
-                21, 23, 20, 22,         // down (bottom)
-                1, 3, 0, 2, 2, 3,       // front
-                12, 13, 14, 15,         // right
-                4, 5, 6, 7,             // back
-                8, 9, 10, 11, 10, 10,   // left
-                16, 17, 18, 19          // up (top)
+
+                21, 23, 20, 22,
+                1, 3, 0, 2, 2, 3,
+                12, 13, 14, 15,
+                4, 5, 6, 7,
+                8, 9, 10, 11, 10, 10,
+                16, 17, 18, 19
         };
         return indices;
     }
 
-    public static int noOfIndicesForHRLeg() {
+    /**
+     *@method: noOfIndicesForTable()
+     *Diese Methode habe ich vollständig übernommen. Die Methode habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *
+     *@function: Gibt einen int Wert zurück, der angibt wie viele Punkte gebraucht werden (siehe makeCardIndicesForTriangleStrip()), um das Objekt zu zeichnen.
+     */
+
+    public static int noOfIndicesForTable() {
         return 28;
     }
 

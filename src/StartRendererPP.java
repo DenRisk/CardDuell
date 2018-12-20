@@ -12,15 +12,23 @@ import com.jogamp.opengl.util.PMVMatrix;
 import de.hshl.obj.loader.OBJLoader;
 import de.hshl.obj.loader.objects.TriangleObject;
 import de.hshl.obj.loader.objects.TriangleSurface;
-
-
-import javax.swing.*;
-
 import static com.jogamp.opengl.GL.*;
+
+/**
+ * @author Karten Lehn
+ * modified by Denis Niklas Risken and Daniel Breiling
+ * Der Grundaufbau, sowie die OpenGL Methoden wurden von JoglBoxLightTextPP übernommen
+ * Der Inhalt wurde eigenständig erarbeitet
+ */
 
 public class StartRendererPP extends GLCanvas implements GLEventListener {
 
-    private static final long serialVersionUID = 1L;
+
+    /**
+     *@modified by Denis Niklas Risken
+     * Im folgenden werden Instanzvariablen der Shaderdateien, des Shaderprogramms, Materialien, Lichtquellen, Objekte der Klasse DrawCandle, DrawBullet, Texturen,
+     * sowie vertex array object, vertex buffer object, index buffer object, Rorationsvariablen etc.
+     */
 
     final String shaderPath = ".\\Shader\\";
     final String vertexShaderFileName = "BlinnPhongPointTex.vert";
@@ -42,9 +50,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     final String fragmentShaderFileNameEnemyCard = "BlinnPhongPointTexCardKreuz10.frag";
     final String fragmentShaderFileNamePicture = "BlinnPhongPointTexClownBorder.frag";
     final String fragmentShaderFileNamePictureItself = "BlinnPhongPointTexClown.frag";
-
-
-
 
 
     private ShaderProgram shaderTable;
@@ -116,12 +121,22 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     InteractionHandler interactionHandler;
     PMVMatrix pmvMatrix;
 
+    /**
+     * @author Karsten Lehn
+     * @param capabilities
+     * Konstruktur übernommen aus der Datei JoglStartCodePP
+     */
+
     public StartRendererPP(GLCapabilities capabilities) {
         super(capabilities);
         this.addGLEventListener(this);
         createAndRegisterInteractionHandler();
     }
 
+    /**
+     * @author Karsten Lehn
+     * Methode übernommen aus der Datei JoglStartCodePP
+     */
     private void createAndRegisterInteractionHandler() {
         interactionHandler = new InteractionHandler();
         this.addKeyListener(interactionHandler);
@@ -130,9 +145,19 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         this.addMouseWheelListener(interactionHandler);
     }
 
+    /**
+     * @modified by Denis Niklas Risken
+     * Der Grundaufbau der init Methode wurde übernommen und mit eigenen Methoden und Werten erweitert
+     * Änderungen sind in der Methode markiert
+     */
+
     @Override
     public void init(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
+
+        /**
+         * Folgende Zeilen wurden von der Datei JoglBoxLightTexPP übernommen
+         */
 
         System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
         System.err.println("INIT GL IS: " + gl.getClass().getName());
@@ -146,6 +171,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         else
             System.out.println("VBO support is available");
 
+        /**
+         * Gibt die Anzahl der Objecte an, die verarbeitet werden
+         * Wert wurde Variabel verändert
+         */
         int noOfObjects = 41;
 
         vaoName = new int[noOfObjects];
@@ -171,6 +200,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
                 System.err.println("Error allocating index buffer object.");
         }
 
+        /**
+         * @modified by Denis Niklas Risken
+         * Lichtwerte wurden der Szene entsprechend zugeordnet
+         */
+
         //lightparameters
         float[] lightPosition = {0.0f, 2.9f, 0.0f, 1.0f};
         float[] lightAmbientColor = {2.0f, 2.0f, 2.0f, 1.0f};
@@ -179,6 +213,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         float[] lightSpot = {0,0,-1};
         lightMain = new LightSource(lightPosition, lightAmbientColor,
                 lightDiffuseColor, lightSpecularColor, lightSpot);
+
+        /**
+         * @modified by Denis Niklas Risken
+         * Kamera Entfernung wurde angepasst und Methoden zur Initialisierung wurde in die init-Methode eingefügt
+         */
 
         pmvMatrix = new PMVMatrix();
         interactionHandler.setEyeZ(0.5f);
@@ -236,11 +275,23 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glEnable(GL.GL_DEPTH_TEST);
     }
 
+    /**
+     * @modified by Denis Niklas Risken
+     * Der Grundaufbau der display Methode wurde übernommen und mit eigenen Methoden und Werten erweitert
+     * Änderungen sind in der Methode markiert
+     */
+
+
     @Override
     public void display(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
+        /**
+         *
+         * Der Hintergrud wurde einem Grauwert
+         * Änderung des Wertes v2 der gluLookAt()-Methode um das Startbild von oben auf den Tisch gerichtet zu erzeugen
+         */
         gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
         pmvMatrix.glMatrixMode(PMVMatrix.GL_MODELVIEW);
@@ -252,6 +303,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glRotatef(interactionHandler.getAngleXaxis(), 1f, 0f, 0f);
         pmvMatrix.glRotatef(interactionHandler.getAngleYaxis(), 0f, 1f, 0f);
 
+        /**
+         * Hier werden die selbst erstellten display Methoden aufgerufen, um die Objekte zeichnen zu können
+         * durch glPushMatrix und glPopMatrix werden Tranformationen der Objekte voneinander getrennt
+         */
+
         pmvMatrix.glPushMatrix();
         displayMainTable(gl);
         displayTableLegVR(gl);
@@ -261,6 +317,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
 
 
+        /**
+         * @made by Denis Niklas Risken
+         * Hier werden die Animationen mithilfe von Rotationen und Translationen erzeugt.
+         */
        pmvMatrix.glPushMatrix();
                 pmvMatrix.glTranslatef(0.0f, 0.05f, +0.0f);
                 if (angle<180) {
@@ -315,10 +375,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
-
-
         pmvMatrix.glPushMatrix();
-
             if (rot == true && zahl !=1) {
                 pmvMatrix.glTranslatef(0, -0.02f, 0);
             }
@@ -335,7 +392,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
             displayEnemyCard(gl);
             pmvMatrix.glPushMatrix();
         }
-
         pmvMatrix.glPopMatrix();
 
         pmvMatrix.glPushMatrix();
@@ -394,15 +450,25 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.glPopMatrix();
     }
 
+    /**
+     * @modified by Denis Niklas Risken und Daniel Breiling
+     * Der Grundaufbau der init und display-Methoden wurde von der Lernplattform JoglBoxLightTexPP @author Karsten Lehn übernommen
+     * und wird im Folgenden nur kurz erläutert
+     */
+
     //init Table
     private void initMainTable(GL3 gl) {
+        /**
+         * Folgender Aufbau wurde übernommen und bearbeitet, durch den Aufruf der richtigen Instanzvariablen und Methoden zum Zeichnen des Objektes
+         */
         gl.glBindVertexArray(vaoName[0]);
         shaderTable = new ShaderProgram(gl);
         shaderTable.loadShaderAndCreateProgram(shaderPath, vertexShaderFileName, fragmentShaderFileNameTable);
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] tVertices = DrawTable.makeBoxVertices(0.8f,0.05f,0.6f, color0);
-        int[] tableIndices = DrawTable.makeBoxIndicesForTriangleStrip();
+        int[] tableIndices = DrawTable.makeTableIndicesForTriangleStrip();
+
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[0]);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, tVertices.length * 4,
@@ -412,16 +478,28 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, tableIndices.length * 4,
                 IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
 
+        /**
+         * Die Methode initPointer wurde von mir geschrieben um den Code zu reduzieren
+         */
         //method to specify the location and data format
        initPointer(gl);
+
+        /**
+         *@modified by Denis Niklas Risken
+         *Wir haben Materialien der Methode hinzugefügt und diese den Lichtverhältnisse angepasst
+         */
 
        //define material properties for the table platform
         float[] matEmission = {0.1f, 0.1f, 0.1f, 1.0f};
         float[] matAmbient =  {0.2f, 0.2f, 0.2f, 1.0f};
         float[] matDiffuse =  {0.5f, 0.5f, 0.5f, 1.0f};
         float[] matSpecular = {0.2f, 0.2f, 0.2f, 1.0f};
-        float matShininess = 200.0f;
+        float matShininess = 128.0f;
         materialTable = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
+
+        /**
+         * wir haben die einzelnen Shader aktiviert und eine Textur geladen
+         */
 
         gl.glActiveTexture(GL_TEXTURE0);
         //texture for the table platform using Shader
@@ -435,14 +513,26 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniformMatrix4fv(0, 1, false, pmvMatrix.glGetPMatrixf());
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
+        /**
+         *Die Methode initUniform wurde eigenständig geschrieben, um Code zu reduzieren.
+         */
         // method for modifying the value of a uniform variable or a uniform variable array
         initUniform(gl, lightMain, materialTable);
 
         gl.glBindVertexArray(vaoName[0]);
+
+        /**
+         * Die Textur wird hier wieder von uns aktiviert
+         */
         gl.glActiveTexture(GL_TEXTURE0);
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForBox(), GL.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForTable(), GL.GL_UNSIGNED_INT, 0);
     }
 
+    /**
+     * Im Folgenden unterscheidet sich der Aufbau nur wenig
+     * Veränderungen im Aufbau werden markiert
+     * In manchen Methoden werden keine Materialeigenshaften und texturen geladen, da die Elemente schon in den Shadern geespeichert sind (code sparend)
+     */
     private void initTableLegVR(GL3 gl) {
         gl.glBindVertexArray(vaoName[1]);
         shaderTable = new ShaderProgram(gl);
@@ -450,7 +540,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] tVertices = DrawTable.tableLegVRVerticices(color0);
-        int[] tableIndices = DrawTable.makeVRLegIndicesForTriangleStrip();
+        int[] tableIndices = DrawTable.makeTableIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[1]);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, tVertices.length * 4,
@@ -488,7 +578,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         gl.glBindVertexArray(vaoName[1]);
         gl.glActiveTexture(GL_TEXTURE0);
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForVRLeg(), GL.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForTable(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initTableLegVL(GL3 gl) {
@@ -498,7 +588,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] tVertices = DrawTable.tableLegVLVerticices(color0);
-        int[] tableIndices = DrawTable.makeVLLegIndicesForTriangleStrip();
+        int[] tableIndices = DrawTable.makeTableIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[2]);
         gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, iboName[2]);
@@ -519,7 +609,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
         gl.glBindVertexArray(vaoName[2]);
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForVLLeg(), GL.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForTable(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initTableLegHL(GL3 gl) {
@@ -529,7 +619,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] cubeVertices = DrawTable.tableLegHLVerticices(color0);
-        int[] tableIndices = DrawTable.makeHLLegIndicesForTriangleStrip();
+        int[] tableIndices = DrawTable.makeTableIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[3]);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, cubeVertices.length * 4,
@@ -550,7 +640,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
         gl.glBindVertexArray(vaoName[3]);
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForHLLeg(), GL.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForTable(), GL.GL_UNSIGNED_INT, 0);
     }
 
     private void initTableLegHR(GL3 gl) {
@@ -560,7 +650,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         float[] color0 = {0.5f, 0.5f, 0.5f};
         float[] tVertices = DrawTable.tableLegHRVerticices(color0);
-        int[] tableIndices = DrawTable.makeHRLegIndicesForTriangleStrip();
+        int[] tableIndices = DrawTable.makeTableIndicesForTriangleStrip();
 
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboName[4]);
         gl.glBufferData(GL.GL_ARRAY_BUFFER, tVertices.length * 4,
@@ -571,7 +661,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
                 IntBuffer.wrap(tableIndices), GL.GL_STATIC_DRAW);
 
         initPointer(gl);
-        //all legs are using the last defined texture + material properties
     }
 
     private void displayTableLegHR(GL3 gl) {
@@ -581,7 +670,7 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glUniformMatrix4fv(1, 1, false, pmvMatrix.glGetMvMatrixf());
 
         gl.glBindVertexArray(vaoName[4]);
-        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForHRLeg(), GL.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawTable.noOfIndicesForTable(), GL.GL_UNSIGNED_INT, 0);
     }
 
     // init Room
@@ -609,8 +698,8 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         float[] matEmission = {0.0f, 0.0f, 0.0f, 1.0f};
         float[] matAmbient =  {0.4f, 0.4f, 0.4f, 1.0f};
         float[] matDiffuse =  {0.2f, 0.2f, 0.2f, 1.0f};
-        float[] matSpecular = {0.1f, 0.1f, 0.1f, 1.0f};
-        float matShininess = 100.0f;
+        float[] matSpecular = {0.0f, 0.0f, 0,0f, 1.0f};
+        float matShininess = 20.0f;
         materialWall = new Material(matEmission, matAmbient, matDiffuse, matSpecular, matShininess);
 
         gl.glActiveTexture(GL_TEXTURE3);
@@ -1238,6 +1327,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawRoomWindow.noOfIndicesForRW(), GL.GL_UNSIGNED_INT, 0);
     }
 
+    /**
+     * @modified by Denis Niklas Risken
+     * Hier werden Zylinder zur Erzeugung der Kerzen erstellt. Die Struktur wurde von der Datei JogleShapesPP der Lernplattform übernommen
+     * Textur und Materialeigenschaften wurden hinzugefügt, sowie Werte zur Erzeugung der Zylinder
+     * die zweite Methode der Klasse LoadTexture wurde angewandt
+     */
+
     //init  candles
     private void initCandle01(GL3 gl) {
         gl.glBindVertexArray(vaoName[24]);
@@ -1426,6 +1522,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, candleWick1.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
     }
 
+    /**
+     * @modified by Denis Niklas Risken
+     * Hier wird eine Kugel zur Erzeugung erstellt. Die Struktur wurde von der Datei JogleShapesPP der Lernplattform übernommen
+     * Textur und Materialeigenschaften wurden hinzugefügt, sowie Werte zur Erzeugung der Kugel
+     * die zweite Methode der Klasse LoadTexture wurde angewandt
+     */
+
     // init bullet
     private void initBullet(GL3 gl) {
         gl.glBindVertexArray(vaoName[28]);
@@ -1481,7 +1584,13 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, bullet.getNoOfIndices(), GL.GL_UNSIGNED_INT, 0);
     }
 
-    // init copy of a card (not used)
+    /**
+     * @modified by Denis Niklas Risken
+     * Im folgenden wird in der display-Methode der Copy-Card eine switch-Verzweigung angewandt
+     * --> dient zum Wechsel einer zufälligen Textur
+     */
+
+    // init copy of a card
     private void initCardCopy(GL3 gl) {
         gl.glBindVertexArray(vaoName[29]);
 
@@ -1559,6 +1668,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
 
+    /**
+     *@method: initPointer()
+     * geschrieben um Code zu reduzieren
+     */
     //method to specify the location and data format
     private void initPointer (GL3 gl) {
 
@@ -1572,6 +1685,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glVertexAttribPointer(3, 2, GL.GL_FLOAT, false, 11*4, 9*4);
     }
 
+    /**
+     *@method: initUniform()
+     * geschrieben um Code zu reduzieren
+     */
     // method: modifies the value of a uniform variable or a uniform variable array
     private void initUniform (GL3 gl, LightSource light, Material material) {
 
@@ -1626,6 +1743,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glActiveTexture(GL_TEXTURE9);
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCards.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
+
+    /**
+     * @modified by Denis Niklas Risken
+     * In der folgenden Init Methode und display-methode werden switch-Verzweigungen genutzt, um die Textur zu ändern. Hierzu wird eine zufällige Zahl
+     * erzeugt und abhängig von der Zahl wird eine Textur auf die Karte geladen
+     */
 
     private void initCardFront(GL3 gl) {
 
@@ -1892,8 +2015,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         gl.glDrawElements(GL.GL_TRIANGLE_STRIP, DrawCard.noOfIndicesForCard(), GL.GL_UNSIGNED_INT, 0);
     }
 
-    //Drawing the clown picture
+    /**
+     * modified by Daniel Breiling
+     */
 
+    //Drawing the clown picture
     private void initPictureTop(GL3 gl){
         gl.glBindVertexArray(vaoName[35]);
         shaderPicture = new ShaderProgram(gl);
@@ -2096,9 +2222,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     }
 
 
-
-
-
+    /**
+     * Die folgenden Methoden sollen eine .obj-Datei lesen und zeichnen lassen
+     * Die Methode ist nicht funktionsfähig und eingebaut, da es Komplikationen mit dem ObjectLoader gab
+     *
+     */
 
 
 
@@ -2135,7 +2263,11 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
     }
     */
 
-
+    /**
+     *@author Karsten Lehn
+     *@method: reshape()
+     * Diese Methode wurde übernommen aus dem Programm JoglBoxLightTexPP
+     */
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -2146,6 +2278,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
         pmvMatrix.gluPerspective(45f, (float) width/ (float) height, 0.1f, 100f);
     }
 
+    /**
+     *@author Karsten Lehn
+     *@modified by Denis Niklas Risken
+     *@method: dispose()
+     * Diese Methode wurde übernommen aus dem Programm JoglBoxLightTexPP und bearbeitet
+     */
 
     @Override
     public void dispose(GLAutoDrawable drawable) {
@@ -2154,6 +2292,10 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         // Detach and delete shader program
         gl.glUseProgram(0);
+
+        /**
+         * Die folgende for-Schleife wurde eingefügt
+         */
         ShaderProgram[] shaderPrograms ={shaderTable, shaderBullet, shaderCandleWick, shaderCandleRed, shaderSky, shaderRoomWindow, shaderWall, shaderBottom, shaderCard,
         shaderP7, shaderK3, shaderH2, shaderCB, shaderEnemyCard, shaderWinAnimation, shaderPicture, shaderPictureItself};
         for (int i = 0; i < shaderPrograms.length; i++) {
@@ -2167,6 +2309,12 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
 
         System.exit(0);
     }
+
+
+    /**
+     *@author: Johannes Vollmer
+     *Die folgende Methode zur Implementierung des OBJLoaders wurde von Johannes Vollmer (nicht werwendet)
+     */
 
     // for the OBJLoader
     private static TriangleSurface loadOBJVertexCoordinates(Path path){

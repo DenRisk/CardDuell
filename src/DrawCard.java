@@ -182,18 +182,18 @@ public class DrawCard {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv01 = {0, 0}; // u = 0, v = 0
-        float[] uv00 = {0, 1}; // u = 0, v = 1
-        float[] uv11 = {1, 0}; // u = 1, v = 0
-        float[] uv10 = {1, 1}; // u = 1, v = 1
+        float[] uv01 = {1, 1};
+        float[] uv00 = {1, 0};
+        float[] uv11 = {0, 1};
+        float[] uv10 = {0, 0};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 
@@ -225,18 +225,18 @@ public class DrawCard {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
-        float[] uv01 = {0, 0}; // u = 0, v = 0
-        float[] uv00 = {0, 1}; // u = 0, v = 1
-        float[] uv11 = {1, 0}; // u = 1, v = 0
-        float[] uv10 = {1, 1}; // u = 1, v = 1
+        float[] uv01 = {0, 0};
+        float[] uv00 = {0, 1};
+        float[] uv11 = {1, 0};
+        float[] uv10 = {1, 1};
 
         float[] verticies = setVerticies(p0, p1, p2, p3, p4, p5, p6, p7, c, nf, nb, nl, nr, nu, nd, uv00, uv01, uv10, uv11);
 

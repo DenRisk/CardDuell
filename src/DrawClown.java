@@ -172,7 +172,7 @@ public class DrawClown {
 
             //normalvector
             float[] nf = {0, 0, 1};
-            float[] nb = {0, 0, -1}; 
+            float[] nb = {0, 0, -1};
             float[] nl = {-1, 0, 0};
             float[] nr = {1, 0, 0};
             float[] nu = {0, 1, 0};

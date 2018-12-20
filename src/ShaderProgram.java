@@ -44,8 +44,9 @@ import com.jogamp.opengl.GL2ES2;
  * http://jogamp.org/git/?p=jogl-demos.git;a=blob;f=src/demos/es2/RawGL2ES2demo.java;hb=HEAD
  *
  * @author Karsten Lehn
- * @version 15.9.2015, 10.9.29017
+ * @version 15.9.2015, 10.9.2017
  *
+ * Diese Klasse wurde von der Datei JoglBoxLightTexPP übernommen
  */
 
 public class ShaderProgram {

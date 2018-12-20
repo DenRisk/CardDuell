@@ -1,4 +1,12 @@
 
+/**
+ *
+ * @author Karsten Lehn
+ * Die Klasse wurde aus der der Datei JoglBoxLightTexPP von der Lernplattform übernommen.
+ *
+ */
+
+
 public class Material {
     private float[] emission;
     private float[] ambient;
