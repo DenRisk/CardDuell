@@ -1,13 +1,9 @@
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.*;
-
-
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
@@ -15,10 +11,14 @@ import com.jogamp.opengl.util.FPSAnimator;
 import javafx.scene.layout.GridPane;
 
 
+/**
+ * @author Karten Lehn
+ * @modified by Denis Niklas Risken
+ *
+ * Für das Programm habe ich den JoglStartCodePP auf der Lernplattform genutzt und bearbeitet
+ *
+ */
 public class StartCodeMainWindowPP  {
-
-
-    //private static final long serialVersionUID = 1L;
 
     private static String TITLE = "Karteduell";
     private static final int CANVAS_WIDTH = 800;  // width of the drawable
@@ -27,10 +27,13 @@ public class StartCodeMainWindowPP  {
     private static JButton button;
     private static JFrame frame;
     private static GLCapabilities capabilities;
-    private static StartRendererPP startRender;
 
     public StartCodeMainWindowPP() {
 
+        /**
+         * @modified by Denis Niklas Risken
+         * Die GUI habe ich eigenständig erstellt
+         */
         frame = new JFrame("Kartenduell");
         frame.getContentPane().setLayout(new BorderLayout());
         frame.setSize(800,800);
@@ -58,7 +61,10 @@ public class StartCodeMainWindowPP  {
         label.setForeground(Color.green);
         label.setHorizontalAlignment(SwingConstants.CENTER);
 
-
+        /**
+         * folgende OpenGL Eigenschaften habe ich übernommen
+         * Die GUI Elemente habe ich eigenständig zum frame eingefügt, sowie die ActionListener
+         */
 
         GLProfile profile = GLProfile.get(GLProfile.GL3);
         capabilities = new GLCapabilities(profile);
@@ -107,6 +113,11 @@ public class StartCodeMainWindowPP  {
         startProgramm();
     }
 
+    /**
+     * @modified by Denis Niklas Risken
+     * @method: startProgramm() selber geschrieben
+     */
+
     static public void startProgramm() {
         button.addActionListener(e ->
                 new StartCodeMainWindowPP()
@@ -115,6 +126,9 @@ public class StartCodeMainWindowPP  {
         );
     }
 
+    /** @modified by Denis Niklas Risken
+     *  @method: die Main Methode wurde von mir bearbeitet, um das Programm neu starten zu können
+     */
     public static void main(String[] args) {
         new StartCodeMainWindowPP();
         startProgramm();

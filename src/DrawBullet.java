@@ -1,11 +1,12 @@
 /**
- * Bearbeitet von Denis Niklas Risken
- * Die Klasse habe ich übernommen aus der Datei JoglShapesPP.zip, die sich auf der Lernplattform befindet.
+ * @modified by Denis Niklas Risken
+ * Die Methoden der Klasse habe ich übernommen aus der Datei JoglShapesPP.zip, die sich auf der Lernplattform befindet.
  * Bei der Initialisierung der Kugel habe ich eigenständig Größe und Position überlegt und in die Szene eingebaut (siehe StartRendererPP)
  *
  * @author Karsten Lehn
  * @version 21.10.2017, 27.10.2017
  */
+
 public class DrawBullet {
     private int verticalResolution;
     private int horizontalResolution;

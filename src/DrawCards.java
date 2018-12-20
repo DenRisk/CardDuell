@@ -1,5 +1,21 @@
 public class DrawCards {
 
+    /**
+     * @modified by Denis Niklas Risken
+     * @author Karsten Lehn
+     * @version 21.10.2017, 27.10.2017
+     * @object Rotierende Karte
+     */
+
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: setVerticies()
+     *
+     *Die Methode habe ich selber geschrieben, um den Code zu reduzieren. Den Inhalt habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *Dabei habe ich leichte Änderungen der Variablen durchgeführt.
+     *@Function: Gibt die Indizes mit passenden Positionen, Normalen, Farbe und Texturkoordinaten wieder.
+     */
+
     private static float[] setVerticies(float[] p0, float[] p1, float[] p2, float[] p3, float[] p4, float[] p5, float[] p6, float[] p7, float[] c, float[] nf, float[] nb, float[] nl, float[] nr, float[] nu, float[] nd,
                                         float[] uv00, float[] uv01, float[] uv10, float[] uv11) {
 
@@ -140,6 +156,17 @@ public class DrawCards {
         return verticies;
     }
 
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: makeCardBackSide()
+     *
+     *Die Methode habe ich übernommen und bearbeitet. Den Inhalt habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *Ich habe eigenständig Koordinaten der Eckpunkte überlegt und dadurch die Parameter der Methode reduziert.
+     *@Function: Positionen, Normalen, Farbe und Texturkoordinaten für das Objekt werden definiert. Dabei wird die Methode setVerticies() aufgerufen,
+     *           in einem float[] gespeichert und zurückgegeben.
+     *
+     */
+
     public static float[] makeCardBackSide(float[] color) {
 
         //position
@@ -156,12 +183,12 @@ public class DrawCards {
         float[] c = color;
 
         //normalvector
-        float[] nf = {0, 0, 1}; // 0 front
-        float[] nb = {0, 0, -1}; // 0 back
-        float[] nl = {-1, 0, 0}; // 0 left
-        float[] nr = {1, 0, 0}; // 0 right
-        float[] nu = {0, 1, 0}; // 0 up (top)
-        float[] nd = {0, -1, 0}; // 0 down (bottom)
+        float[] nf = {0, 0, 1};
+        float[] nb = {0, 0, -1};
+        float[] nl = {-1, 0, 0};
+        float[] nr = {1, 0, 0};
+        float[] nu = {0, 1, 0};
+        float[] nd = {0, -1, 0};
 
         // Definition of texture coordinates for cuboid surfaces
         float[] uv00 = {0, 0}; // u = 0, v = 0
@@ -173,6 +200,15 @@ public class DrawCards {
 
         return verticies;
     }
+
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: makeCardFrontSide()
+     *
+     * Folgende Operationen wiederholen sich.
+     * siehe Oben (method: makeCardBackSide)
+     *
+     */
 
     public static float[] makeCardFrontSide(float[] color) {
 
@@ -208,6 +244,13 @@ public class DrawCards {
         return verticies;
     }
 
+    /**
+     *@method: makeCardIndicesForTriangleStrip()
+     *Diese Methode habe ich vollständig übernommen. Die Methode habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *
+     *@function: Gibt die Indizes zurück, in welcher Reihenfolge der Indizes gezeichnet werden sollen
+     */
+
     public static int[] makeCardIndicesForTriangleStrip() {
 
         int[] indices = {
@@ -222,6 +265,13 @@ public class DrawCards {
         };
         return indices;
     }
+
+    /**
+     *@method: noOfIndicesForCard()
+     *Diese Methode habe ich vollständig übernommen. Die Methode habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *
+     *@function: Gibt einen int Wert zurück, der angibt wie viele Punkte gebraucht werden (siehe makeCardIndicesForTriangleStrip()), um das Objekt zu zeichnen.
+     */
 
     public static int noOfIndicesForCard() {
         return 28;

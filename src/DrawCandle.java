@@ -1,13 +1,14 @@
 /**
- * Java class for creating vertex and buffer data for drawing a frustum
- * with circular base surfaces using Jogl/OpenGL.
- * For avoiding confusion with the "frustum for clipping"
- * the name "cone" it used.
- * Intended to be used for an OpenGL scene renderer.
- * The resolution of the shape is held as instance variables.
+ * /**
+ * @modified by Denis Niklas Risken
+ * Die Methoden der Klasse habe ich übernommen aus der Datei JoglShapesPP.zip, die sich auf der Lernplattform befindet.
+ * Bei der Initialisierung der Kerzen habe ich eigenständig Größe und Position überlegt und in die Szene eingebaut (siehe StartRendererPP)
+ *
  * @author Karsten Lehn
  * @version 21.10.2017, 27.10.2017
+ *
  */
+
 public class DrawCandle {
     private int horizontalResolution;
     private int noOfIndices;

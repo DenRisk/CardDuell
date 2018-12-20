@@ -1,5 +1,21 @@
 public class DrawRoomWindow {
 
+    /**
+     * @modified by Denis Niklas Risken
+     * @author Karsten Lehn
+     * @version 21.10.2017, 27.10.2017
+     * @object Window of the Room
+     */
+
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: setVerticies()
+     *
+     *Die Methode habe ich selber geschrieben, um den Code zu reduzieren. Den Inhalt habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *Dabei habe ich teilweise leichte Änderungen der Variablen durchgeführt.
+     *@Function: Gibt die Indizes mit passenden Positionen, Normalen, Farbe und Texturkoordinaten wieder.
+     */
+
     private static float[] setVerticies(float[] p0, float[] p1, float[] p2, float[] p3, float[] p4, float[] p5, float[] p6, float[] p7, float[] c, float[] nf, float[] nb, float[] nl, float[] nr, float[] nu, float[] nd,
                                         float[] uv00, float[] uv01, float[] uv10, float[] uv11) {
 
@@ -140,6 +156,16 @@ public class DrawRoomWindow {
         return verticies;
     }
 
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: WindowTopVertices()
+     *
+     *Die Methode habe ich übernommen und bearbeitet. Den Inhalt habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *Ich habe eigenständig Koordinaten der Eckpunkte überlegt und dadurch die Parameter der Methode reduziert.
+     *@Function: Positionen, Normalen, Farbe und Texturkoordinaten für das Objekt werden definiert. Dabei wird die Methode setVerticies() aufgerufen,
+     *           in einem float[] gespeichert und zurückgegeben.
+     */
+
     public static float[] WindowTopVerticices(float[] color) {
 
         float[] p0 = {1.5f, 2f, -4.01f};
@@ -171,6 +197,15 @@ public class DrawRoomWindow {
 
         return verticies;
     }
+
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: WindowBottomVerticices()
+     *
+     * Folgende Operationen wiederholen sich.
+     * siehe Oben (method: WindowTopVerticices())
+     *
+     */
 
     public static float[] WindowBottomVerticices(float[] color) {
 
@@ -204,6 +239,15 @@ public class DrawRoomWindow {
         return verticies;
     }
 
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: WindowBottomVerticices()
+     *
+     * Folgende Operationen wiederholen sich.
+     * siehe Oben (method: WindowTopVerticices())
+     *
+     */
+
     public static float[] WindowLeftVerticices(float[] color) {
 
         float[] p0 = {1.4f, 1.9f, -4.01f};
@@ -235,6 +279,15 @@ public class DrawRoomWindow {
 
         return verticies;
     }
+
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: WindowRightVerticices()
+     *
+     * Folgende Operationen wiederholen sich.
+     * siehe Oben (method: WindowTopVerticices())
+     *
+     */
 
     public static float[] WindowRightVerticices(float[] color) {
 
@@ -268,6 +321,15 @@ public class DrawRoomWindow {
         return verticies;
     }
 
+    /**
+     *@modified by Denis Niklas Risken
+     *@method: WindowOutsideVerticices
+     *
+     * Folgende Operationen wiederholen sich.
+     * siehe Oben (method: WindowTopVerticices())
+     *
+     */
+
     public static float[] WindowOutsideVerticices(float[] color) {
 
         float[] p0 = {-1.4f, 1.9f, -4.001f};
@@ -300,6 +362,13 @@ public class DrawRoomWindow {
         return verticies;
     }
 
+    /**
+     *@method: makeRWIndicesForTriangleStrip()
+     *Diese Methode habe ich vollständig übernommen. Die Methode habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *
+     *@function: Gibt die Indizes zurück, in welcher Reihenfolge der Indizes gezeichnet werden sollen
+     */
+
     public static int[] makeRWIndicesForTriangleStrip() {
 
         int[] indices = {
@@ -314,6 +383,14 @@ public class DrawRoomWindow {
         };
         return indices;
     }
+
+    /**
+     *@method: noOfIndicesForRW()
+     *Diese Methode habe ich vollständig übernommen. Die Methode habe ich aus den Datein der Lernplattform zum Zeichnen eines Quaders übernommen.
+     *
+     *@function: Gibt einen int Wert zurück, der angibt wie viele Punkte gebraucht werden (siehe makeCardIndicesForTriangleStrip()), um das Objekt zu zeichnen.
+     */
+
     public static int noOfIndicesForRW() {
         return 28;
     }
