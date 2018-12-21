@@ -368,8 +368,6 @@ public class StartRendererPP extends GLCanvas implements GLEventListener {
                         pmvMatrix.glTranslatef(-0.15f, 0.08f, 0.1f);
                         displayWinAnimation(gl);
                         pmvMatrix.glPopMatrix();
-                    }if (zahl == 1) {
-
                     }
                 }
         pmvMatrix.glPopMatrix();
