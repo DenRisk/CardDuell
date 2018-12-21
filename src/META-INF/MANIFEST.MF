@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: C:\Users\Denis\Desktop\OpenGL Projekt Kartenduell\Kartendu
+ ell OpenGL\src\StartCodeMainWindowPP.java
+Main-Class: StartCodeMainWindowPP
+

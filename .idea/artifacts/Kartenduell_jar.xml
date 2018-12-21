@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Kartenduell:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Kartenduell_jar</output-path>
+    <root id="archive" name="Kartenduell.jar">
+      <element id="module-output" name="Kartenduell" />
+      <element id="extracted-dir" path="D:/OpenGL/Jogl Libary/jar/gluegen-rt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/OpenGL/Jogl Libary/jar/gluegen.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/OpenGL/Jogl Libary/jar/jogl-all.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/OBJLoader/OBJLoader.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

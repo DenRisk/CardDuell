@@ -8,7 +8,7 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
-import javafx.scene.layout.GridPane;
+
 
 
 /**
@@ -42,7 +42,7 @@ public class StartCodeMainWindowPP  {
         frame.setUndecorated(true);
 
 
-        GridPane grid = new GridPane();
+
         Font font = new Font("Georgia Pro Black", Font.PLAIN, 20);
         button = new JButton("Start Programm", new ImageIcon(""));
         button.setBackground(Color.DARK_GRAY);
